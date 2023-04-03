@@ -67,7 +67,7 @@ function lax_wendroff(up::Vector, u::Vector)
 end
 
 
-function update(c::Cells, flg::Bool, f::Function)
+function update!(c::Cells, flg::Bool, f::Function)
 	up=next(c, flg) # u^(n+1)
 	u=current(c, flg) # u^n
 	f(up, u)
@@ -84,7 +84,7 @@ function main()
 	f = upwind
 	flg=true # flag
 	for _ = 1:round(Int, t/Δt)
-		flg=update(c, flg, f)
+		flg=update!(c, flg, f)
 	end
 
 	plt.title("time = "*string(t)*", "*string(f))
