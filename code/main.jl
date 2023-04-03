@@ -81,7 +81,7 @@ function main()
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
 
 	f = upwind
-	flg=Bool(1) # flag
+	flg=true # flag
 	for _ = 1:round(Int, t/Δt)
 		flg=update(c, flg, f)
 	end
