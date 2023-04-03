@@ -44,18 +44,30 @@ end
 next(c::Cells, flg::Bool)::Vector = flg ? c.up : c.u
 current(c::Cells, flg::Bool)::Vector = flg ? c.u : c.up
 
-C = 0.05
+# %%
+C = 1.0
 # C = Δt/Δx
 Δt = Δx * C
 
-function upwind(u::Vector)
-	u - C * [u[1]-u[end], diff(u)...] # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
+
+function upwind(up::Vector, u::Vector)
+	up .= u - C * [u[1]-u[end], diff(u)...] # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 end
 
-function update(c::Cells, flg::Bool)
+
+function lax_wendroff(up::Vector, u::Vector)
+	for j = 2:length(u)-1
+		up[j] = u[j] - 0.5 * C * ( u[j+1] - u[j-1] ) + 0.5 * C^2 * ( u[j+1] - 2u[j] + u[j-1] )
+	end
+	up[1] = u[1] - 0.5 * C * ( u[2] - u[end] ) + 0.5 * C^2 * ( u[2] - 2u[1] + u[end] )
+	up[end] = u[end] - 0.5 * C * ( u[1] - u[end-1] ) + 0.5 * C^2 * ( u[1] - 2u[end] + u[end-1] )
+end
+
+
+function update(c::Cells, flg::Bool, f::Function)
 	up=next(c, flg) # u^(n+1)
 	u=current(c, flg) # u^n
-	up .= upwind(u)
+	f(up, u)
 	return !flg
 end
 # %%
@@ -66,18 +78,18 @@ function main()
 	init = init1
 	c=Cells(f=init)
 
-	# plt.subplot(211)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
-	# plt.plot(c.x, current(c,!flg), "-.k", linewidth=0.2, label="init")
 
+	f = upwind
 	flg=Bool(1) # flag
 	for _ = 1:round(Int, t/Δt)
-		flg=update(c, flg)
+		flg=update(c, flg, f)
 	end
 
-	# plt.subplot(212)
-	plt.plot(c.x, c.up, label="up")
-	plt.show()
+	plt.title("time = "*string(t)*", "*string(f))
+	plt.plot(c.x, c.up, "--.", label="up")
+	# plt.show()
+	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 
 end
 
