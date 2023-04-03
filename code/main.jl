@@ -32,14 +32,17 @@ struct Cells
 	x::AbstractVector{Float64}
 	u::Vector{Float64} # u^n
 	up::Vector{Float64} # u^(n+1) ; u plus
-	function Cells(b::Float64=-1.0, e::Float64=2.0; step::Float64=Δx, f::Function=init1)
+	function Cells(b::Float64=-1.0, e::Float64=2.0; step::Float64=Δx, init::Function=init1)
 		x = range(b, e, step=step)
 		u=similar(x)
-		f(x, u)
+		init(x, u)
 		up=similar(x)
 		new(x, u , up)
 	end
 end
+Cells(Δ::Float64)=Cells(-1.0, 2.0, step=Δ)
+Cells(init::Function)=Cells(-1.0, 2.0, init=init)
+Cells(b::Float64, e::Float64, Δ::Float64)=Cells(b, e, step=Δ)
 
 next(c::Cells, flg::Bool)::Vector = flg ? c.up : c.u
 current(c::Cells, flg::Bool)::Vector = flg ? c.u : c.up
@@ -75,9 +78,7 @@ end
 t=0.5
 
 function main()
-	init = init1
-	c=Cells(f=init)
-
+	c=Cells(init1)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
 
 	f = upwind
