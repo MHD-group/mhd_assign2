@@ -89,9 +89,11 @@ function main()
 
 	plt.title("time = "*string(t)*", "*string(f))
 	plt.plot(c.x, c.up, "--.", label="up")
-	# plt.show()
-	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+	plt.show()
+	# plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 
 end
 
-main()
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
