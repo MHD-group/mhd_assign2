@@ -48,7 +48,7 @@ next(c::Cells, flg::Bool)::Vector = flg ? c.up : c.u
 current(c::Cells, flg::Bool)::Vector = flg ? c.u : c.up
 
 # %%
-C = 1.0
+C = 0.95
 # C = Δt/Δx
 Δt = Δx * C
 
@@ -66,6 +66,30 @@ function lax_wendroff(up::Vector, u::Vector)
 	up[end] = u[end] - 0.5 * C * ( u[1] - u[end-1] ) + 0.5 * C^2 * ( u[1] - 2u[end] + u[end-1] )
 end
 
+function minmod(a::AbstractFloat, b::AbstractFloat)::AbstractFloat
+	if sign(a) * sign(b) > 0
+		if abs(a) < abs(b)
+			return a
+		end
+		return b
+	end
+	return 0
+end
+
+# %%
+
+function limiter(up::Vector, u::Vector)
+	for i = 3:length(u)-1
+		up[i] = u[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
+			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
+	end
+	up[1] = u[1] - C * (u[1] - u[end]) - 0.5 * C * (1 - C) *
+		( minmod(u[1]-u[end], u[2]-u[1]) - minmod(u[end]-u[end-1], u[1]-u[end]) )
+	up[2] = u[2] - C * (u[2] - u[1]) - 0.5 * C * (1 - C) *
+		( minmod(u[2]-u[1], u[3]-u[2]) - minmod(u[1]-u[end], u[2]-u[1]) )
+	up[end] = u[end] - C * (u[end] - u[end-1]) - 0.5 * C * (1 - C) *
+		( minmod(u[end]-u[end-1], u[1]-u[end]) - minmod(u[end-1]-u[end-2], u[end]-u[end-1]) )
+end
 
 function update!(c::Cells, flg::Bool, f::Function)
 	up=next(c, flg) # u^(n+1)
@@ -81,19 +105,17 @@ function main()
 	c=Cells(init1)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
 
-	f = upwind
+	f = limiter
 	flg=true # flag
-	for _ = 1:round(Int, t/Δt)
+	for _ = 1:round(Int, t/Δt)-3
 		flg=update!(c, flg, f)
 	end
 
 	plt.title("time = "*string(t)*", "*string(f))
 	plt.plot(c.x, c.up, "--.", label="up")
 	plt.show()
+	plt.clf()
 	# plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 
 end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
-end
+main()
