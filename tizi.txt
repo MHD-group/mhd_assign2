@@ -1,3 +1,8 @@
 curl -Ls https://mirrors.v2raya.org/go.sh | sudo bash
 sudo systemctl disable v2ray --now ### Xray needs to replace the service with xray
 https://jmoesub.bygcloud.com/api/v1/client/subscribe?token=430ad0f47927956834e9f9dce9a6607a
+
+wget -qO - https://apt.v2raya.org/key/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/v2raya.asc
+echo "deb https://apt.v2raya.org/ v2raya main" | sudo tee /etc/apt/sources.list.d/v2raya.list
+sudo apt update
+sudo apt install v2raya
