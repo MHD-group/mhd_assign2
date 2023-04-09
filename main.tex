@@ -5,6 +5,7 @@
 \usepackage{ctex}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{geometry}
 \usepackage{natbib}
 \usepackage{subcaption}
 
@@ -90,35 +91,35 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \begin{subfigure}{.48\linewidth}
 	\includegraphics[width=\textwidth]{figures/problem1_upwind0.05.pdf}
   \caption{}
-  \label{fig:1}
+  \label{fig:problem1-1}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.48\linewidth}
   \includegraphics[width=\textwidth]{figures/problem1_upwind0.5.pdf} % second figure itself
   \caption{}
-  \label{fig:2}
+  \label{fig:problem1-2}
 \end{subfigure}
 \begin{subfigure}{.48\linewidth}
   \includegraphics[width=\textwidth]{figures/problem1_upwind0.95.pdf}
   \caption{}
-  \label{fig:3}
+  \label{fig:problem1-3}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.48\linewidth}
   \includegraphics[width=\textwidth]{figures/problem1_upwind1.0.pdf}
   \caption{}
-  \label{fig:4}
+  \label{fig:problem1-4}
 \end{subfigure}
 \begin{subfigure}{.48\linewidth}
   \includegraphics[width=\textwidth]{figures/problem1_lax_wendroff0.95.pdf}
   \caption{}
-  \label{fig:5}
+  \label{fig:problem1-5}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.48\linewidth}
   \includegraphics[width=\textwidth]{figures/problem1_upwind0.05.pdf}
   \caption{}
-  \label{fig:6}
+  \label{fig:problem1-6}
 \end{subfigure}
 \caption{方程~(\ref{EqnCon}) 在 $t=0.5$ 时刻的解. 其中虚线表示数值迎风格式的计算结果, 线上的圆圈表示具体网格上的数据. 同一时刻的精确解用实线表示. 作为对照,
   初始时刻的值以点线表示, 坐标网格总数为 517. (a) 迎风格式, $C = 0.05$, (b)  迎风格式, $C = 0.50$, (c)  迎风格式, $C = 0.95$, (d) 迎风格式, $C = 1.0$,
@@ -155,27 +156,33 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 
 图~\ref{BurgersW} 是方程~(\ref{EqnBurgers}) 的迎风格式在时间 $t = 0.25$, $0.5$, $0.75$, 和 $1.0$ 的计算结果, 其中 Courant 系数取 0.95,
 即 $\Delta t = 0.95 \frac{\Delta x}{\max(u)}$.
-\begin{figure}
-\begin{center}
-\begin{tabular}{cc}
-\includegraphics[width=.45\textwidth]{Burgers025}
-&
-\includegraphics[width=.45\textwidth]{Burgers050}
-\\[-10pt]
-(a) & (b)
-\\
-\includegraphics[width=.45\textwidth]{Burgers075}
-&
-\includegraphics[width=.45\textwidth]{Burgers100}
-\\[-10pt]
-(c) & (d)
-\end{tabular}
-\end{center}
+\begin{figure} 
+\centering
+\begin{subfigure}{.9\linewidth}
+  \includegraphics[width=\textwidth]{figures/problem2_limiter20.25.pdf} % first figure itself
+  \caption{first figure}
+  \label{fig:problem2-1}
+\end{subfigure}
+\begin{subfigure}{.9\linewidth}
+  \includegraphics[width=\textwidth]{figures/problem2_limiter20.5.pdf} % first figure itself
+  \caption{first figure}
+  \label{fig:problem2-2}
+\end{subfigure}
+\begin{subfigure}{.9\linewidth}
+  \includegraphics[width=\textwidth]{figures/problem2_limiter20.75.pdf} % first figure itself
+  \caption{first figure}
+  \label{fig:problem2-3}
+\end{subfigure}
+\begin{subfigure}{.9\linewidth}
+  \includegraphics[width=\textwidth]{figures/problem2_limiter21.pdf} % first figure itself
+  \caption{first figure}
+  \label{fig:problem2-4}
+\end{subfigure}
 \caption{%
-  方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 517 个网格, Courant 系数 $C$ 取为 0.95. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
+  方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.5. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
   解析解用实线表示, 初始时刻的值以点线表示. (a) $t=0.25$, (b) $t=0.5$, (c) $t=0.75$, (d) $t=1.0$.
 }
-\label{BurgersW}
+  \label{fig:problem2-summary}%
 \end{figure}
 
 \section{分工说明}
