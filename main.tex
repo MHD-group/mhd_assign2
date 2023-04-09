@@ -117,7 +117,7 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \end{subfigure}
 \hfill
 \begin{subfigure}{.48\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem1_upwind0.05.pdf}
+  \includegraphics[width=\textwidth]{figures/problem1_limiter0.95.pdf}
   \caption{}
   \label{fig:problem1-6}
 \end{subfigure}
@@ -160,26 +160,22 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 \centering
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.25.pdf} % first figure itself
-  \caption{first figure}
   \label{fig:problem2-1}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.5.pdf} % first figure itself
-  \caption{first figure}
   \label{fig:problem2-2}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.75.pdf} % first figure itself
-  \caption{first figure}
   \label{fig:problem2-3}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter21.pdf} % first figure itself
-  \caption{first figure}
   \label{fig:problem2-4}
 \end{subfigure}
 \caption{%
-  方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.5. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
+  方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.2. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
   解析解用实线表示, 初始时刻的值以点线表示. (a) $t=0.25$, (b) $t=0.5$, (c) $t=0.75$, (d) $t=1.0$.
 }
   \label{fig:problem2-summary}%

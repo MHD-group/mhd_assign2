@@ -66,7 +66,7 @@ end
 
 
 # %%
-C = 0.05
+C = 0.2
 Δx= 0.007
 # C = Δt/Δx
 Δt = Δx * C
@@ -127,13 +127,16 @@ end
 
 
 # %%
-t=0.5
+t=1
 
 function main()
 	f = limiter2
 	plt.figure(figsize=(10,3))
 	c=Cells(step=Δx, init=init2)
 	# plt.subplot(length(functions),1,i)
+
+	# plt.rcParams["font.size"]=30
+	# plt.rcParams["lines.color"]="r"
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
 
 	flg=true # flag
@@ -141,10 +144,11 @@ function main()
 		flg=update!(c, flg, f)
 	end
 
-	plt.title("time = "*string(t)*", "*string(f))
+	plt.title("time = "*string(t)*", "*"Minmod")
+	# plt.plot(c.x, c.up, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	# plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 	plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
-	# plt.show()
+	plt.show()
 end
 main()
