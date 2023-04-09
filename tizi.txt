@@ -1,0 +1,3 @@
+curl -Ls https://mirrors.v2raya.org/go.sh | sudo bash
+sudo systemctl disable v2ray --now ### Xray needs to replace the service with xray
+https://jmoesub.bygcloud.com/api/v1/client/subscribe?token=430ad0f47927956834e9f9dce9a6607a
