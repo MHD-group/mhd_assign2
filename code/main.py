@@ -49,13 +49,34 @@ def Upwind(x, C=1, t=1):
     result = tmp[0]
     for n in range(t):
         cur = n%2
-        next = (n%2 + 1)%2
+        nex = (n%2 + 1)%2
         for i in range(N-1):
-            tmp[next,i+1] =  tmp[cur,i+1] - C*(tmp[cur, i+1] - tmp[cur, i])
-            result = tmp[next]
+            tmp[nex,i+1] =  tmp[cur,i+1] - C*(tmp[cur, i+1] - tmp[cur, i])
+            result = tmp[nex]
 
 #    for i in range(t):
     return tmp[0]
+
+def minmod(a, b):
+    return 0 if  a * b < 0 else min([a, b]) if b > 0 else max([a, b])
+
+def limiter(x, C=1, t=1):
+    N = x.size
+    tmp = np.zeros((2, N), dtype=x.dtype)
+    tmp[0] = x.copy()
+    tmp[1] = x.copy()
+    result = tmp[0]
+    for n in range(t):
+        cur = n%2
+        nex = (n%2 + 1)%2
+        for i in range(N):
+            I = i - 2
+            tmp[nex,I+1] =  tmp[cur,I+1] - C*(tmp[cur, I+1] - tmp[cur, I]) - 0.5 * C * (1 - C) *\
+			( minmod(tmp[cur, I+1]-tmp[cur, I], tmp[cur, I+2]-tmp[cur, I+1]) - \
+                        minmod(tmp[cur, I]-tmp[cur, I-1], tmp[cur, I+1]-tmp[cur, I]) )
+            result = tmp[nex]
+
+    return result
 
 if  __name__ == '__main__':
     parser = argparse.ArgumentParser(description="calculate X to the power of Y")
@@ -63,7 +84,7 @@ if  __name__ == '__main__':
     parser.add_argument("-x", "--resolution", default=0.01, type=float, help="length of Δx")
     parser.add_argument("-C", "--ratio", default=0.5, type=float, help="Δt/Δx")
     parser.add_argument("-i", "--input", default=1, type=int, help="f(x) when t=0")
-    parser.add_argument("-m", "--method", default="Upwind", type=str, help="methods")
+    parser.add_argument("-m", "--method", default="limiter", type=str, help="methods")
     args = parser.parse_args()
 
     # Δx: args.resolution
@@ -90,6 +111,8 @@ if  __name__ == '__main__':
     # simu output
     if args.method == "Upwind":
         S1 = Upwind(M0, C, n_t)
+    elif args.method == "limiter":
+        S1 = limiter(M0, C, n_t)
     else:
         print("error input function")
     fig, axs = plt.subplots(2,
@@ -97,7 +120,9 @@ if  __name__ == '__main__':
                             figsize=(8, 6))
     axs[0].plot(x, M0)
     axs[1].plot(x, M1, alpha=0.5)
-    axs[1].plot(x, S1)
+    axs[0].set_xlim(-0.5,1)
+    axs[1].set_xlim(-0.5,1)
+    axs[1].plot(x, S1, '--o')
     plt.show()
 
 
