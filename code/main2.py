@@ -50,12 +50,33 @@ def Upwind(x, C=1, t=1):
     for n in range(t):
         cur = n%2
         next = (n%2 + 1)%2
-        for i in range(N-1):
-            tmp[next,i+1] =  tmp[cur,i+1] - C*0.5*(tmp[cur, i+1]**2 - tmp[cur, i]**2)
+        for i in range(N):
+            I = i - 1
+            tmp[next,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2)
             result = tmp[next]
-
-#    for i in range(t):
     return tmp[0]
+
+def minmod(a, b):
+    return 0 if  a * b < 0 else min([a, b]) if b > 0 else max([a, b])
+
+def limiter(x, C=1, t=1):
+    N = x.size
+    tmp = np.zeros((2, N), dtype=x.dtype)
+    tmp[0] = x.copy()
+    tmp[1] = x.copy()
+    result = tmp[0]
+    for n in range(t):
+        cur = n%2
+        nex = (n%2 + 1)%2
+        for i in range(N):
+            I = i - 2
+            tmp[nex,I+1] =  tmp[cur,I+1] - C*(tmp[cur, I+1] - tmp[cur, I]) - 0.5 * C * (1 - C) *\
+			( minmod(tmp[cur, I+1]-tmp[cur, I], tmp[cur, I+2]-tmp[cur, I+1]) - \
+                        minmod(tmp[cur, I]-tmp[cur, I-1], tmp[cur, I+1]-tmp[cur, I]) )
+            result = tmp[nex]
+
+    return result
+
 
 if  __name__ == '__main__':
     parser = argparse.ArgumentParser(description="calculate X to the power of Y")

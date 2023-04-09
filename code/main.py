@@ -51,10 +51,9 @@ def Upwind(x, C=1, t=1):
         cur = n%2
         nex = (n%2 + 1)%2
         for i in range(N-1):
-            tmp[nex,i+1] =  tmp[cur,i+1] - C*(tmp[cur, i+1] - tmp[cur, i])
+            I = i - 1
+            tmp[nex,I+1] =  tmp[cur,I+1] - C*(tmp[cur, I+1] - tmp[cur, I])
             result = tmp[nex]
-
-#    for i in range(t):
     return tmp[0]
 
 def minmod(a, b):
