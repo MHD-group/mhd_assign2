@@ -56,7 +56,6 @@ function update!(c::Cells, flg::Bool, f::Function)
 	return !flg
 end
 
-# %%
 
 function minmod(a::AbstractFloat, b::AbstractFloat)::AbstractFloat
 	if sign(a) * sign(b) > 0
@@ -70,7 +69,7 @@ end
 
 
 # %%
-C = 0.2
+C = 0.95
 Δx= 0.007
 # C = Δt/Δx
 Δt = Δx * C
@@ -113,28 +112,33 @@ end
 
 
 # %%
-t=1
+
+t=0.5
+
+matplotlib.rc("font", size=14)
 
 function main()
-	f = limiter2
-	plt.figure(figsize=(10,3))
-	c=Cells(step=Δx, init=init2)
+	f = upwind
+	# plt.figure(figsize=(10,3))
+	c=Cells(step=Δx, init=init1)
 	# plt.subplot(length(functions),1,i)
 
 	# plt.rcParams["font.size"]=30
 	# plt.rcParams["lines.color"]="r"
+
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
+    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-b", linewidth=0.4)
 
 	flg=true # flag
-	for _ = 1:round(Int, t/Δt)-3
+	for _ = 1:round(Int, t/Δt)
 		flg=update!(c, flg, f)
 	end
 
-	plt.title("time = "*string(t)*", "*"Minmod")
-	# plt.plot(c.x, c.up, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-	plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-	# plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
-	plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
+	plt.title("time = "*string(t)*", "*"Upwind")
+	plt.plot(c.x, c.up, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	# plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
 main()
