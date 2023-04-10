@@ -5,13 +5,17 @@
     Distributed under terms of the MIT license.
 =#
 
+using CircularArrays
 using PyCall
 using LaTeXStrings
 
 @pyimport matplotlib.pyplot as plt
+@pyimport matplotlib
+# https://stackoverflow.com/questions/3899980/how-to-change-the-font-size-on-a-matplotlib-plot
+matplotlib.rc("font", size=20)
 
 # %%
-function init1(x::AbstractVector, u::Vector)
+function init1(x::AbstractVector, u::AbstractVector)
 	@. u[ x < -0.4] = 0.0
 	@. u[-0.4 <= x < -0.2] = 1.0 - abs(x[-0.4 <= x < -0.2]+0.3) / 0.1
 	@. u[-0.2 <= x < -0.1] = 0.0
@@ -19,7 +23,7 @@ function init1(x::AbstractVector, u::Vector)
 	@. u[ x >= 0.0 ] = 0.0
 end
 
-function init2(x::AbstractVector, u::Vector) # Burgers 方程 初始化
+function init2(x::AbstractVector, u::AbstractVector) # Burgers 方程 初始化
 	@. u[ x < -0.8] = 1.8
 	@. u[-0.8 <= x < -0.3] = 1.4 + 0.4*cos(2π*(x[-0.8 <= x < -0.3]+0.8))
 	@. u[-0.3 <= x < 0.0] = 1.0
@@ -28,13 +32,13 @@ end
 
 struct Cells
 	x::AbstractVector{Float64}
-	u::Vector{Float64} # u^n
-	up::Vector{Float64} # u^(n+1) ; u plus
+	u::CircularVector{Float64} # u^n
+	up::CircularVector{Float64} # u^(n+1) ; u plus
 	function Cells(b::Float64=-1.0, e::Float64=2.0; step::Float64=0.01, init::Function=init1)
 		x = range(b, e, step=step)
-		u=similar(x)
+		u=CircularVector(0.0, length(x))
 		init(x, u)
-		up=similar(x)
+		up=similar(u)
 		new(x, u , up)
 	end
 end
@@ -42,8 +46,8 @@ Cells(Δ::Float64)=Cells(-1.0, 2.0, step=Δ)
 Cells(init::Function)=Cells(-1.0, 2.0, init=init)
 Cells(b::Float64, e::Float64, Δ::Float64)=Cells(b, e, step=Δ)
 
-next(c::Cells, flg::Bool)::Vector = flg ? c.up : c.u
-current(c::Cells, flg::Bool)::Vector = flg ? c.u : c.up
+next(c::Cells, flg::Bool)::CircularVector = flg ? c.up : c.u
+current(c::Cells, flg::Bool)::CircularVector = flg ? c.u : c.up
 
 function update!(c::Cells, flg::Bool, f::Function)
 	up=next(c, flg) # u^(n+1)
@@ -72,56 +76,38 @@ C = 0.2
 Δt = Δx * C
 
 
-function upwind(up::Vector, u::Vector)
-	for i = 2:length(u)
+function upwind(up::CircularVector, u::CircularVector)
+	for i = 1:length(u)
 		up[i] = u[i] - C * (u[i] -u[i-1])  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
-	up[1] = u[1] - C * (u[1] -u[end])
 end
 
 
-function upwind2(up::Vector, u::Vector)
-	for i = 2:length(u)
+function upwind2(up::CircularVector, u::CircularVector)
+	for i = 1:length(u)
 		up[i] = u[i] - 0.5C * (u[i]^2 -u[i-1]^2)  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
-	up[1] = u[1] - 0.5C * (u[1]^2 -u[end]^2)
 end
 
-
-
-function lax_wendroff(up::Vector, u::Vector)
-	for j = 2:length(u)-1
+function lax_wendroff(up::CircularVector, u::CircularVector)
+	for j = 1:length(u)
 		up[j] = u[j] - 0.5 * C * ( u[j+1] - u[j-1] ) + 0.5 * C^2 * ( u[j+1] - 2u[j] + u[j-1] )
 	end
-	up[1] = u[1] - 0.5 * C * ( u[2] - u[end] ) + 0.5 * C^2 * ( u[2] - 2u[1] + u[end] )
-	up[end] = u[end] - 0.5 * C * ( u[1] - u[end-1] ) + 0.5 * C^2 * ( u[1] - 2u[end] + u[end-1] )
 end
 
-function limiter(up::Vector, u::Vector)
-	for i = 3:length(u)-1
+function limiter(up::CircularVector, u::CircularVector)
+	for i = 1:length(u)
 		up[i] = u[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
-	up[1] = u[1] - C * (u[1] - u[end]) - 0.5 * C * (1 - C) *
-		( minmod(u[1]-u[end], u[2]-u[1]) - minmod(u[end]-u[end-1], u[1]-u[end]) )
-	up[2] = u[2] - C * (u[2] - u[1]) - 0.5 * C * (1 - C) *
-		( minmod(u[2]-u[1], u[3]-u[2]) - minmod(u[1]-u[end], u[2]-u[1]) )
-	up[end] = u[end] - C * (u[end] - u[end-1]) - 0.5 * C * (1 - C) *
-		( minmod(u[end]-u[end-1], u[1]-u[end]) - minmod(u[end-1]-u[end-2], u[end]-u[end-1]) )
 end
 
-function limiter2(up::Vector, un::Vector)
+function limiter2(up::CircularVector, un::CircularVector)
 	u = @. 0.5un^2
-	for i = 3:length(u)-1
+	for i = 1:length(u)
 		up[i] = un[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
-	up[1] = un[1] - C * (u[1] - u[end]) - 0.5 * C * (1 - C) *
-		( minmod(u[1]-u[end], u[2]-u[1]) - minmod(u[end]-u[end-1], u[1]-u[end]) )
-	up[2] = un[2] - C * (u[2] - u[1]) - 0.5 * C * (1 - C) *
-		( minmod(u[2]-u[1], u[3]-u[2]) - minmod(u[1]-u[end], u[2]-u[1]) )
-	up[end] = un[end] - C * (u[end] - u[end-1]) - 0.5 * C * (1 - C) *
-		( minmod(u[end]-u[end-1], u[1]-u[end]) - minmod(u[end-1]-u[end-2], u[end]-u[end-1]) )
 end
 
 
