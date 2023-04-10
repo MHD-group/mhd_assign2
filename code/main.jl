@@ -76,26 +76,26 @@ C = 0.95
 
 
 function upwind(up::CircularVector, u::CircularVector)
-	for i = 1:length(u)
+	for i in eachindex(u)
 		up[i] = u[i] - C * (u[i] -u[i-1])  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
 end
 
 
 function upwind2(up::CircularVector, u::CircularVector)
-	for i = 1:length(u)
+	for i in eachindex(u)
 		up[i] = u[i] - 0.5C * (u[i]^2 -u[i-1]^2)  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
 end
 
 function lax_wendroff(up::CircularVector, u::CircularVector)
-	for j = 1:length(u)
+	for j in eachindex(u)
 		up[j] = u[j] - 0.5 * C * ( u[j+1] - u[j-1] ) + 0.5 * C^2 * ( u[j+1] - 2u[j] + u[j-1] )
 	end
 end
 
 function limiter(up::CircularVector, u::CircularVector)
-	for i = 1:length(u)
+	for i in eachindex(u)
 		up[i] = u[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
@@ -103,7 +103,7 @@ end
 
 function limiter2(up::CircularVector, un::CircularVector)
 	u = @. 0.5un^2
-	for i = 1:length(u)
+	for i in eachindex(u)
 		up[i] = un[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
