@@ -115,7 +115,7 @@ end
 
 t=0.5
 
-matplotlib.rc("font", size=14)
+# matplotlib.rc("font", size=14)
 
 function main()
 	f = upwind
