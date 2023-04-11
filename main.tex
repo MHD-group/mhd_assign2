@@ -46,7 +46,7 @@
 
 \begin{abstract}
 课程《磁流体力学的数值模拟方法》的第二次作业，讨论一维单一变量双曲型方程，其中包括行波方程和 \textit{Burgers} 方程的有限差分数值解法,
-结合分析讨论几种常用的差分格式的特点. 如迎风格式， \textit{Lax-Wendroff} 格式，已经斜率补偿的限制器模式。行波方程与 \textit{Burgers} 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 \textit{Burgers} 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
+结合分析讨论几种常用的差分格式的特点. 如迎风格式， \textit{Lax-Wendroff} 格式，斜率补偿的限制器模式。行波方程与 \textit{Burgers} 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 \textit{Burgers} 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
 \end{abstract}
 
 \section{引言与背景}
@@ -62,16 +62,16 @@
 \end{align}
 本次研究对象为其中正向传播的行波方程。
 
-另外流体力学中也会存在一些典型的非线性波动现象，如激波等等。在激波发生时，会在上游流体与下有流体之间出现一层流体状态量极具空间变化的过程。为了模拟激波的生成，我们采用了简单的非线性 \textit{Burgers} 方程
+另外流体力学中也会存在一些典型的非线性波动现象，如激波等等。在激波发生时，会在上游流体与下有流体之间出现一层流体状态量急剧空间变化的过程。为了模拟激波的生成，我们采用了简单的非线性 \textit{Burgers} 方程
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
 \end{align}
 通过选用具体的某些初始函数的形状，通过模拟实验观察激波的生成。
 
-本次实验重点在于以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括迎风格式， \textit{Lax-Wendroff} 高精度格式，以及采用斜率修正的限制器格式。
+本次实验主要以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括迎风格式， \textit{Lax-Wendroff} 高精度格式，以及采用斜率修正的限制器格式。
 
 \section{实验方法以及对应的理论部分}
-数值实验总体思路：采用适当的空间间隔讲一维空间网格化，然后设计具体的数值物理量的网格值内容，在讲时间网格与空间网格的比$C = \Delta t / \Delta x$作为可调节参数，使用程序进行迭代更新网格内容。
+数值实验总体思路：采用适当的空间间隔将一维空间网格化，然后设计具体的数值物理量的网格值内容，在将时间网格与空间网格的比$C = \Delta t / \Delta x$作为可调节参数，使用程序进行迭代更新网格内容。
 方程包括行波方程与 \textit{Burgers} 方程两种。方法主要是以迎风格式探讨不同的C对于稳定性的影响，然后固定某一个C下讨论不同格式的数值方法对于稳定性的影响。
 
 其中具体的方程以及不同的数值方法的表达式形式如下
@@ -120,16 +120,16 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 	\end{cases}
 \end{equation}
 
-\textit{Burgers}方程
+\textit{Burgers} 方程
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0
 \end{align}
-\textit{Burgers}方程对应的迎风格式
+\textit{Burgers} 方程对应的迎风格式
 \begin{equation}
 u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right)
 \end{equation}
 
-\textit{Burgers}方程对应的$minmod Limiters$格式
+\textit{Burgers} 方程对应的 \textit{minmod Limiters} 格式
 \begin{equation}
 \begin{aligned}
 u_i^{n+1}=&
