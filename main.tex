@@ -5,6 +5,7 @@
 \usepackage{ctex}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{physics}
 \usepackage{geometry}
 \usepackage{natbib}
 \usepackage{subcaption}
@@ -45,7 +46,6 @@
 \begin{abstract}
 课程《磁流体力学的数值模拟方法》的第二次作业，讨论一维单一变量双曲型方程，其中包括行波方程和 $Burgers$ 方程的有限差分数值解法,
 结合分析讨论几种常用的差分格式的特点. 如迎风格式，$Lax-Wendroff$格式，已经斜率补偿的限制器模式。行波方程与 $Burgers$ 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 $Burgers$ 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
-请在 \textbf{\due} 前完成并提交.
 \end{abstract}
 
 \section{引言与背景}
@@ -84,13 +84,46 @@ $Burgers$方程
 \end{array}\right.
 \end{align}
 下的数值解. 通过有限差分格式, 如迎风格式
-\begin{align}
+\begin{equation}
 u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwind}
+\end{equation}
+Lax-Wendroff 格式
+\begin{align}
+	u_j^{n+1} 
+	=&
+	u_j^{n} 
+	-
+	\frac{a \Delta t}{ 2 \Delta x } (  	u_{j+1}^{n} - u_{j-1}^{n} ) \\
+	&+ \frac{1}{2} \left( \frac{a \Delta t}{ \Delta x } \right)^2 (  	u_{j+1}^{n}- 2 u_j^n + u_{j-1}^{n} )
 \end{align}
+
+Limiters 
+\begin{equation}
+\begin{aligned}
+u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \Delta t) \sigma_{i-1}^n\right)+ \\
+& \left(1-\frac{a \Delta t}{\Delta x}\right)\left(u_i^n-\frac{1}{2} a \Delta t \sigma_i^n\right) \\
+= & u_i^n-\frac{a \Delta t}{\Delta x}\left(u_i^n-u_{i-1}^n\right)-\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right)
+\end{aligned}
+\end{equation}
+其中
+\begin{equation}
+	\sigma_i^n = \verb|minmod| ( \frac{u_i^n - u_{i-1}^{n}}{ \Delta x }, \frac{u_{i+1}^n - u_{i}^{n}}{ \Delta x } )
+\end{equation}
+\begin{equation}
+	\verb|minmod|(a, b) = 
+	\begin{cases}
+		a, \qif |a| < |b| \qand ab > 0\\
+		b, \qif |a| > |b| \qand ab > 0\\
+		0, \qif ab \leq 0.
+	\end{cases}
+\end{equation}
+
+
 讨论该方程的物理解和差分格式数值解的特性. 要求
 \begin{enumerate}
 \item
   设计和编写程序进行数值计算试验, 试验和比较不同格式, 不同网格密度, 不同时间步长的计算结果.
+网格密度为 428，时间步长 Courant 系数 ($C = \Delta t / \Delta x$) 为 0.05, 0.5, 0.95, 1.0
 \item
   以图形来表示数值解的发展和变化. 和解析解比较, 分析数值解在间断附近的特性, 如速度, 过渡区宽度等.
 \item
@@ -148,6 +181,30 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
 \end{align}
+\begin{equation}
+u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right), \label{EqnUpwind}
+\end{equation}
+
+Limiters 
+\begin{equation}
+\begin{aligned}
+u_i^{n+1}=&
+  u_i^n-\frac{a \Delta t}{\Delta x}\left( \frac{1}{2} (u_i^n)^2- \frac{1}{2} (u_{i-1}^n)^2 \right)-
+ &\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right)
+\end{aligned}
+\end{equation}
+其中
+\begin{equation}
+	\sigma_i^n = \verb|minmod| \left( \frac{ \frac{1}{2} (u_i^n)^2 - \frac{1}{2} (u_{i-1}^{n})^2 }{ \Delta x }, \frac{ \frac{1}{2} (u_{i+1}^n)^2 - \frac{1}{2} (u_{i}^{n})^2}{ \Delta x } \right)
+\end{equation}
+\begin{equation}
+	\verb|minmod|(a, b) = 
+	\begin{cases}
+		a, \qif |a| < |b| \qand ab > 0\\
+		b, \qif |a| > |b| \qand ab > 0\\
+		0, \qif ab \leq 0.
+	\end{cases}
+\end{equation}
 在初值为
 \begin{align}
 u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
