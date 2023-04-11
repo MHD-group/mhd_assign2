@@ -49,13 +49,13 @@ Cells(b::Float64, e::Float64, Δ::Float64)=Cells(b, e, step=Δ)
 next(c::Cells, flg::Bool)::CircularVector = flg ? c.up : c.u
 current(c::Cells, flg::Bool)::CircularVector = flg ? c.u : c.up
 
-function update!(c::Cells, flg::Bool, f::Function)
+function update!(c::Cells, flg::Bool, f::Function, C::AbstractFloat)
 	up=next(c, flg) # u^(n+1)
 	u=current(c, flg) # u^n
-	f(up, u)
+	f(up, u, C)
 	return !flg
 end
-
+update!(c::Cells, flg::Bool, f::Function) = update!(c, flg, f, 0.05)
 
 function minmod(a::AbstractFloat, b::AbstractFloat)::AbstractFloat
 	if sign(a) * sign(b) > 0
@@ -75,33 +75,33 @@ C = 0.95
 Δt = Δx * C
 
 
-function upwind(up::CircularVector, u::CircularVector)
+function upwind(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	for i in eachindex(u)
 		up[i] = u[i] - C * (u[i] -u[i-1])  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
 end
 
 
-function upwind2(up::CircularVector, u::CircularVector)
+function upwind2(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	for i in eachindex(u)
 		up[i] = u[i] - 0.5C * (u[i]^2 -u[i-1]^2)  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
 	end
 end
 
-function lax_wendroff(up::CircularVector, u::CircularVector)
+function lax_wendroff(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	for j in eachindex(u)
 		up[j] = u[j] - 0.5 * C * ( u[j+1] - u[j-1] ) + 0.5 * C^2 * ( u[j+1] - 2u[j] + u[j-1] )
 	end
 end
 
-function limiter(up::CircularVector, u::CircularVector)
+function limiter(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	for i in eachindex(u)
 		up[i] = u[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
 end
 
-function limiter2(up::CircularVector, un::CircularVector)
+function limiter2(up::CircularVector, un::CircularVector, C::AbstractFloat)
 	u = @. 0.5un^2
 	for i in eachindex(u)
 		up[i] = un[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
@@ -115,7 +115,7 @@ end
 
 t=0.5
 
-# matplotlib.rc("font", size=14)
+matplotlib.rc("font", size=14)
 
 function main()
 	f = upwind
@@ -127,7 +127,7 @@ function main()
 	# plt.rcParams["lines.color"]="r"
 
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
-    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-b", linewidth=0.4)
+    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
 
 	flg=true # flag
 	for _ = 1:round(Int, t/Δt)
@@ -135,10 +135,70 @@ function main()
 	end
 
 	plt.title("time = "*string(t)*", "*"Upwind")
-	plt.plot(c.x, c.up, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	# plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+
 	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+
 	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
 main()
+
+
+
+# %%
+function problem1(C::AbstractFloat, f::Function, title::String; Δx::AbstractFloat=0.007)
+	t=0.5
+	Δt = Δx * C
+	c=Cells(step=Δx, init=init1)
+	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
+    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
+
+	flg=true # flag
+	for _ = 1:round(Int, t/Δt)
+		flg=update!(c, flg, f, C)
+	end
+
+	plt.title("time = "*string(t)*", "* title)
+	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+	plt.show()
+end
+problem1(0.05, upwind, "Upwind")
+problem1(0.5, upwind, "Upwind")
+problem1(0.95, upwind, "Upwind")
+problem1(1.0, upwind, "Upwind")
+problem1(0.95, lax_wendroff, "Lax-Wendroff")
+problem1(0.95, limiter, "Minmod")
+
+
+# %%
+function problem1a()
+	t=0.5
+	f = upwind
+	# plt.figure(figsize=(10,3))
+	c=Cells(step=Δx, init=init1)
+	# plt.subplot(length(functions),1,i)
+
+	# plt.rcParams["font.size"]=30
+	# plt.rcParams["lines.color"]="r"
+
+	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
+    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
+
+	flg=true # flag
+	for _ = 1:round(Int, t/Δt)
+		flg=update!(c, flg, f)
+	end
+
+	plt.title("time = "*string(t)*", "*"Upwind")
+	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	# plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+
+	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+
+	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
+	plt.show()
+end
+problem1c()

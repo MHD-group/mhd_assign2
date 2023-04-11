@@ -93,7 +93,7 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 	u_j^{n} 
 	-
 	\frac{a \Delta t}{ 2 \Delta x } (  	u_{j+1}^{n} - u_{j-1}^{n} ) \\
-	&+ \frac{1}{2} \left( \frac{a \Delta t}{ \Delta x } \right)^2 (  	u_{j+1}^{n}- 2 u_j^n + u_{j-1}^{n} )
+	&+ \frac{1}{2} \left( \frac{a \Delta t}{ \Delta x } \right)^2 (  	u_{j+1}^{n}- 2 u_j^n + u_{j-1}^{n} ),
 \end{align}
 
  
@@ -102,13 +102,14 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \begin{aligned}
 u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \Delta t) \sigma_{i-1}^n\right)+ \\
 & \left(1-\frac{a \Delta t}{\Delta x}\right)\left(u_i^n-\frac{1}{2} a \Delta t \sigma_i^n\right) \\
-= & u_i^n-\frac{a \Delta t}{\Delta x}\left(u_i^n-u_{i-1}^n\right)-\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right)
+= & u_i^n-\frac{a \Delta t}{\Delta x}\left(u_i^n-u_{i-1}^n\right)-\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right),
 \end{aligned}
 \end{equation}
 其中
 \begin{equation}
 	\sigma_i^n = \verb|minmod| ( \frac{u_i^n - u_{i-1}^{n}}{ \Delta x }, \frac{u_{i+1}^n - u_{i}^{n}}{ \Delta x } )
 \end{equation}
+及
 \begin{equation}
 	\verb|minmod|(a, b) = 
 	\begin{cases}
@@ -171,7 +172,16 @@ u_i^{n+1}=&
 \begin{enumerate}
 \item
   设计和编写程序进行数值计算试验, 试验和比较不同格式, 不同网格密度, 不同时间步长的计算结果.
-网格密度为 428，时间步长 Courant 系数 ($C = \Delta t / \Delta x$) 为 0.05, 0.5, 0.95, 1.0
+网格密度取 428，
+对于迎风格式，时间步长 Constant 系数 ($C = \Delta t / \Delta x$) 变化，
+\begin{itemize}
+	\item C 为 0.05 时，$u$随着波的传播被逐渐抹平的情况最为严重；
+	\item C 为 0.5 时， $u$随着波的传播被逐渐抹平；
+	\item C 为 0.95 时， $u$随着波的传播与精确解几乎一致；
+	\item C 为 1.0 时数值解与精确解完全一致；
+	\item C 大于 1.0 时，$u$ 的解出现严重振荡，不再像物理解。
+\end{itemize}
+
 \item
   以图形来表示数值解的发展和变化. 和解析解比较, 分析数值解在间断附近的特性, 如速度, 过渡区宽度等.
 \item
