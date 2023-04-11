@@ -70,40 +70,23 @@
 本次实验重点在于以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括迎风格式，$LaxWendroff$高精度格式，以及采用斜率修正的限制器格式。
 
 \section{实验方法以及对应的理论部分}
-\subsection{行波方程的理论和方法}
+数值实验总体思路：采用适当的空间间隔讲一维空间网格化，然后设计具体的数值物理量的网格值内容，在讲时间网格与空间网格的比$C = \Delta t / \Delta x$作为可调节参数，使用程序进行迭代更新网格内容。
+方程包括行波方程与$Burgers$方程两种。方法主要是以迎风格式探讨不同的C对于稳定性的影响，然后固定某一个C下讨论不同格式的数值方法对于稳定性的影响。
+
+其中具体的方程以及不同的数值方法的表达式形式如下
+
 行波方程
 \begin{align}
 & \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
 \label{EqnCon}
 \end{align}
-\subsection{$Burgers$方程的理论和方法}
-$Burgers$方程
-\begin{align}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
-\end{align}
 
-
-\section{实验结果及解释描述}
-\subsection{行波方程数值模拟部分}
-考察方程
-\begin{align}
-& \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
-\label{EqnCon}
-\end{align}
-在初值条件
-\begin{align}
-& u|_{t=0} = \left\{\begin{array}{ll} 0.0, & x < -0.4, \\
-1.0 - |x + 0.3| / 0.1, & -0.4 \le x < -0.2, \\
-0.0, & -0.2 \le x < -0.1, \\
-1.0 , & -0.1 \le x < 0.0, \\
-0.0, & x \ge 0.0
-\end{array}\right.
-\end{align}
-下的数值解. 通过有限差分格式, 如迎风格式
+行波方程对应的迎风格式
 \begin{equation}
 u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwind}
 \end{equation}
-Lax-Wendroff 格式
+
+行波方程对应的Lax-Wendroff 格式
 \begin{align}
 	u_j^{n+1} 
 	=&
@@ -113,7 +96,8 @@ Lax-Wendroff 格式
 	&+ \frac{1}{2} \left( \frac{a \Delta t}{ \Delta x } \right)^2 (  	u_{j+1}^{n}- 2 u_j^n + u_{j-1}^{n} )
 \end{align}
 
-Limiters 
+ 
+行波方程对应的$minmod Limiters$格式
 \begin{equation}
 \begin{aligned}
 u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \Delta t) \sigma_{i-1}^n\right)+ \\
@@ -134,6 +118,54 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 	\end{cases}
 \end{equation}
 
+$Burgers$方程
+\begin{align}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
+\end{align}
+$Burgers$方程对应的迎风格式
+\begin{equation}
+u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right), \label{EqnUpwind}
+\end{equation}
+
+$Burgers$方程对应的$minmod Limiters$格式
+\begin{equation}
+\begin{aligned}
+u_i^{n+1}=&
+  u_i^n-\frac{a \Delta t}{\Delta x}\left( \frac{1}{2} (u_i^n)^2- \frac{1}{2} (u_{i-1}^n)^2 \right)-
+ &\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right)
+\end{aligned}
+\end{equation}
+其中
+\begin{equation}
+	\sigma_i^n = \verb|minmod| \left( \frac{ \frac{1}{2} (u_i^n)^2 - \frac{1}{2} (u_{i-1}^{n})^2 }{ \Delta x }, \frac{ \frac{1}{2} (u_{i+1}^n)^2 - \frac{1}{2} (u_{i}^{n})^2}{ \Delta x } \right)
+\end{equation}
+\begin{equation}
+	\verb|minmod|(a, b) = 
+	\begin{cases}
+		a, \qif |a| < |b| \qand ab > 0\\
+		b, \qif |a| > |b| \qand ab > 0\\
+		0, \qif ab \leq 0.
+	\end{cases}
+\end{equation}
+
+
+\section{实验结果及解释描述}
+\subsection{行波方程数值模拟部分}
+考察方程
+\begin{align}
+& \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
+\label{EqnCon}
+\end{align}
+在初值条件
+\begin{align}
+& u|_{t=0} = \left\{\begin{array}{ll} 0.0, & x < -0.4, \\
+1.0 - |x + 0.3| / 0.1, & -0.4 \le x < -0.2, \\
+0.0, & -0.2 \le x < -0.1, \\
+1.0 , & -0.1 \le x < 0.0, \\
+0.0, & x \ge 0.0
+\end{array}\right.
+\end{align}
+下的数值解
 
 讨论该方程的物理解和差分格式数值解的特性. 要求
 \begin{enumerate}
@@ -197,30 +229,6 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
 \end{align}
-\begin{equation}
-u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right), \label{EqnUpwind}
-\end{equation}
-
-Limiters 
-\begin{equation}
-\begin{aligned}
-u_i^{n+1}=&
-  u_i^n-\frac{a \Delta t}{\Delta x}\left( \frac{1}{2} (u_i^n)^2- \frac{1}{2} (u_{i-1}^n)^2 \right)-
- &\frac{1}{2} \frac{a \Delta t}{\Delta x}(\Delta x-a \Delta t)\left(\sigma_i^n-\sigma_{i-1}^n\right)
-\end{aligned}
-\end{equation}
-其中
-\begin{equation}
-	\sigma_i^n = \verb|minmod| \left( \frac{ \frac{1}{2} (u_i^n)^2 - \frac{1}{2} (u_{i-1}^{n})^2 }{ \Delta x }, \frac{ \frac{1}{2} (u_{i+1}^n)^2 - \frac{1}{2} (u_{i}^{n})^2}{ \Delta x } \right)
-\end{equation}
-\begin{equation}
-	\verb|minmod|(a, b) = 
-	\begin{cases}
-		a, \qif |a| < |b| \qand ab > 0\\
-		b, \qif |a| > |b| \qand ab > 0\\
-		0, \qif ab \leq 0.
-	\end{cases}
-\end{equation}
 在初值为
 \begin{align}
 u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
@@ -232,7 +240,7 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 1.8, & x \ge 0.0
 \end{array} \right.
 \end{align}
-时的数值解. 设计一到多个差分格式, 分析数值计算结果并进行讨论. 要求
+时的数值解
 \begin{enumerate}
 \item
   设计和编写程序进行数值计算试验.
