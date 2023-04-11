@@ -12,7 +12,7 @@ using LaTeXStrings
 @pyimport matplotlib.pyplot as plt
 @pyimport matplotlib
 # https://stackoverflow.com/questions/3899980/how-to-change-the-font-size-on-a-matplotlib-plot
-matplotlib.rc("font", size=20)
+matplotlib.rc("font", size=14)
 
 # %%
 function init1(x::AbstractVector, u::AbstractVector)
@@ -72,7 +72,7 @@ end
 C = 0.95
 Δx= 0.007
 # C = Δt/Δx
-Δt = Δx * C
+Δt =  C * Δx
 
 
 function upwind(up::CircularVector, u::CircularVector, C::AbstractFloat)
@@ -113,38 +113,6 @@ end
 
 # %%
 
-t=0.5
-
-matplotlib.rc("font", size=14)
-
-function main()
-	f = upwind
-	# plt.figure(figsize=(10,3))
-	c=Cells(step=Δx, init=init1)
-	# plt.subplot(length(functions),1,i)
-
-	# plt.rcParams["font.size"]=30
-	# plt.rcParams["lines.color"]="r"
-
-	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
-    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
-
-	flg=true # flag
-	for _ = 1:round(Int, t/Δt)
-		flg=update!(c, flg, f)
-	end
-
-	plt.title("time = "*string(t)*", "*"Upwind")
-	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-	# plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-
-	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
-
-	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
-	plt.show()
-end
-main()
-
 
 
 # %%
@@ -165,40 +133,45 @@ function problem1(C::AbstractFloat, f::Function, title::String; Δx::AbstractFlo
 	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 	plt.show()
 end
-problem1(0.05, upwind, "Upwind")
-problem1(0.5, upwind, "Upwind")
-problem1(0.95, upwind, "Upwind")
-problem1(1.0, upwind, "Upwind")
-problem1(0.95, lax_wendroff, "Lax-Wendroff")
-problem1(0.95, limiter, "Minmod")
-
 
 # %%
-function problem1a()
-	t=0.5
-	f = upwind
-	# plt.figure(figsize=(10,3))
-	c=Cells(step=Δx, init=init1)
-	# plt.subplot(length(functions),1,i)
-
-	# plt.rcParams["font.size"]=30
-	# plt.rcParams["lines.color"]="r"
-
+function problem2(t::AbstractFloat)
+	C = 0.2
+	Δt =  C * Δx / 1.8
+	f = limiter2
+	plt.figure(figsize=(10,3))
+	c=Cells(step=Δx, init=init2)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
-    plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
+    # plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
 
 	flg=true # flag
 	for _ = 1:round(Int, t/Δt)
-		flg=update!(c, flg, f)
+		flg=update!(c, flg, f, C)
 	end
 
 	plt.title("time = "*string(t)*", "*"Upwind")
-	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-	# plt.plot(c.x, c.up, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-
-	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
+	# plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
+	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 
 	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
-problem1c()
+problem2(0.25)
+problem2(0.5)
+problem2(0.75)
+problem2(1.0)
+
+# %%
+function main()
+	problem1(0.05, upwind, "Upwind")
+	problem1(0.5, upwind, "Upwind")
+	problem1(0.95, upwind, "Upwind")
+	problem1(1.0, upwind, "Upwind")
+	problem1(0.95, lax_wendroff, "Lax-Wendroff")
+	problem1(0.95, limiter, "Minmod")
+	problem2(0.25)
+	problem2(0.5)
+	problem2(0.75)
+	problem2(1.0)
+end
+main()
