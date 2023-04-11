@@ -251,15 +251,9 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 1.8, & x \ge 0.0
 \end{array} \right.
 \end{align}
-时的数值解
-\begin{enumerate}
-\item
-  设计和编写程序进行数值计算试验.
-\item
-  以图形来表示数值解的发展和变化.
-\item
-  可能的话, 分析数值耗散和色散效应 (间断的宽度, 传播速度, 产生的数值解振荡等).
-\end{enumerate}
+时的数值解如图~\ref{fig:problem2} 所示。
+  % TODO 以图形来表示数值解的发展和变化.
+  % TODO 可能的话, 分析数值耗散和色散效应 (间断的宽度, 传播速度, 产生的数值解振荡等).
 
 图~\ref{BurgersW} 是方程~(\ref{EqnBurgers}) 的迎风格式在时间 $t = 0.25$, $0.5$, $0.75$, 和 $1.0$ 的计算结果, 其中 Courant 系数取 0.95,
 即 $\Delta t = 0.95 \frac{\Delta x}{\max(u)}$.
@@ -268,25 +262,29 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 \centering
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.25.pdf} % first figure itself
+	\caption{}
   \label{fig:problem2-1}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.5.pdf} % first figure itself
+	\caption{}
   \label{fig:problem2-2}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
   \includegraphics[width=\textwidth]{figures/problem2_limiter20.75.pdf} % first figure itself
+	\caption{}
   \label{fig:problem2-3}
 \end{subfigure}
 \begin{subfigure}{.9\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem2_limiter21.pdf} % first figure itself
+  \includegraphics[width=\textwidth]{figures/problem2_limiter21.0.pdf} % first figure itself
+	\caption{}
   \label{fig:problem2-4}
 \end{subfigure}
 \caption{%
   方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.2. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
   解析解用实线表示, 初始时刻的值以点线表示. (a) $t=0.25$, (b) $t=0.5$, (c) $t=0.75$, (d) $t=1.0$.
 }
-  \label{fig:problem2-summary}%
+  \label{fig:problem2}%
 \end{figure}
 
 \section{分工说明}
@@ -297,31 +295,37 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 
 \begin{enumerate}
 \item
-assign2.tex -- 本报告的 \LaTeX 文件
+main.tex -- 本报告的 \LaTeX 文件
 \item
-assign2.pdf -- 本报告的 PDF (Portable Document Format) 输出文件
+main.pdf -- 本报告的 PDF (Portable Document Format) 输出文件
 \item
 References.bib -- 文献文件
 \item
-LinearW517005.eps -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(a)
+	\verb|code/main.jl| 本报告的 problem 1 和 problem 2 的 julia 代码
 \item
-LinearW517050.eps -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(b)
+	\verb|code/main.py| 本报告的 problem 1 python 代码
 \item
-LinearW517095.eps -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(c)
+	\verb|code/main.py| 本报告的 problem 2 python 代码
 \item
-LinearW517100.eps -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(d)
+\verb|figures/problem1_upwind0.05.pdf| -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-1}
 \item
-LinearWLW517095.eps -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(e)
+\verb|figures/problem1_upwind0.05.pdf| -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-2}
 \item
-LinearWMM517095.eps - 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{LinearW}(f)
+\verb|figures/problem1_upwind0.95.pdf| -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-3}
 \item
-Burgers025.eps -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{BurgersW}(a)
+\verb|figures/problem1_upwind1.0.pdf| -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-4}
 \item
-Burgers050.eps -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{BurgersW}(b)
+\verb|figures/problem1_lax_wendroff0.95.pdf| -- 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-5}
 \item
-Burgers075.eps -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{BurgersW}(c)
+\verb|figures/problem1_limiter0.95.pdf| - 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-6}
 \item
-Burgers100.eps -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{BurgersW}(d)
+\verb|figures/problem2_limiter20.05.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-1}
+\item
+\verb|figures/problem2_limiter20.25.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-2}
+\item
+\verb|figures/problem2_limiter20.75.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-3}
+\item
+\verb|figures/problem2_limiter21.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-4}
 \end{enumerate}
 
 \section*{项目作业的一些要点}

@@ -137,9 +137,10 @@ end
 # %%
 function problem2(t::AbstractFloat)
 	C = 0.2
-	Δt =  C * Δx / 1.8
+	Δt =  C * Δx
 	f = limiter2
-	plt.figure(figsize=(10,3))
+	matplotlib.rc("font", size=13)
+	plt.figure(figsize=(10,2.5))
 	c=Cells(step=Δx, init=init2)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
     # plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
@@ -149,11 +150,11 @@ function problem2(t::AbstractFloat)
 		flg=update!(c, flg, f, C)
 	end
 
-	plt.title("time = "*string(t)*", "*"Upwind")
+	plt.title("time = "*string(t)*", "*"Minmod")
 	# plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 
-	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
+	plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
 problem2(0.25)
