@@ -48,12 +48,27 @@
 请在 \textbf{\due} 前完成并提交.
 \end{abstract}
 
-\section{引言}
+\section{引言与背景}
 一维单变量函数的一阶双曲型偏微分方程表示了一个波动的传播发展过程, 在线性方程的情况下,
 波的形状不随时间改变, 而在非线性方程的情况下, 一个连续有限振幅的波可能发展成有间断的解, 即激波, 或者从激波 (间断) 演化为连续的解\citep{Whitham1999}.
 通过偏微分方程的数值计算格式, 可以分析数值解的物理特性和讨论格式的可靠性.
 
-\section{行波方程}
+\section{实验方法以及对应的理论部分}
+\subsection{行波方程的理论和方法}
+行波方程
+\begin{align}
+& \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
+\label{EqnCon}
+\end{align}
+\subsection{$Burgers$方程的理论和方法}
+$Burgers$方程
+\begin{align}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
+\end{align}
+
+
+\section{实验结果及解释描述}
+\subsection{行波方程数值模拟部分}
 考察方程
 \begin{align}
 & \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
@@ -86,8 +101,6 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 
 作为参考, 图~\ref{LinearW} 是方程~(\ref{LinearW}) 的不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果. 其中,
 实线是精确解, 点线表示初态值, 虚线是数值计算结果, 而圆圈是具体网格 (单元) 上的数据. 
-
-
 \begin{figure} 
 \centering
 \begin{subfigure}{.48\linewidth}
@@ -130,7 +143,7 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \end{figure}
 
 
-\section{Burgers 方程}
+\subsection{$Burgers$方程数值模拟部分}
 考察方程
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
@@ -158,6 +171,7 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 
 图~\ref{BurgersW} 是方程~(\ref{EqnBurgers}) 的迎风格式在时间 $t = 0.25$, $0.5$, $0.75$, 和 $1.0$ 的计算结果, 其中 Courant 系数取 0.95,
 即 $\Delta t = 0.95 \frac{\Delta x}{\max(u)}$.
+
 \begin{figure} 
 \centering
 \begin{subfigure}{.9\linewidth}
