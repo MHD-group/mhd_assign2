@@ -44,8 +44,8 @@
 \maketitle
 
 \begin{abstract}
-课程《磁流体力学的数值模拟方法》的第二次作业，讨论一维单一变量双曲型方程，其中包括行波方程和 $Burgers$ 方程的有限差分数值解法,
-结合分析讨论几种常用的差分格式的特点. 如迎风格式，$Lax-Wendroff$格式，已经斜率补偿的限制器模式。行波方程与 $Burgers$ 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 $Burgers$ 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
+课程《磁流体力学的数值模拟方法》的第二次作业，讨论一维单一变量双曲型方程，其中包括行波方程和 \textit{Burgers} 方程的有限差分数值解法,
+结合分析讨论几种常用的差分格式的特点. 如迎风格式，$Lax-Wendroff$格式，已经斜率补偿的限制器模式。行波方程与 \textit{Burgers} 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 \textit{Burgers} 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
 \end{abstract}
 
 \section{引言与背景}
@@ -61,7 +61,7 @@
 \end{align}
 本次研究对象为其中正向传播的行波方程。
 
-另外流体力学中也会存在一些典型的非线性波动现象，如激波等等。在激波发生时，会在上游流体与下有流体之间出现一层流体状态量极具空间变化的过程。为了模拟激波的生成，我们采用了简单的非线性$Burgers$方程
+另外流体力学中也会存在一些典型的非线性波动现象，如激波等等。在激波发生时，会在上游流体与下有流体之间出现一层流体状态量极具空间变化的过程。为了模拟激波的生成，我们采用了简单的非线性\textit{Burgers}方程
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
 \end{align}
@@ -71,7 +71,7 @@
 
 \section{实验方法以及对应的理论部分}
 数值实验总体思路：采用适当的空间间隔讲一维空间网格化，然后设计具体的数值物理量的网格值内容，在讲时间网格与空间网格的比$C = \Delta t / \Delta x$作为可调节参数，使用程序进行迭代更新网格内容。
-方程包括行波方程与$Burgers$方程两种。方法主要是以迎风格式探讨不同的C对于稳定性的影响，然后固定某一个C下讨论不同格式的数值方法对于稳定性的影响。
+方程包括行波方程与\textit{Burgers}方程两种。方法主要是以迎风格式探讨不同的C对于稳定性的影响，然后固定某一个C下讨论不同格式的数值方法对于稳定性的影响。
 
 其中具体的方程以及不同的数值方法的表达式形式如下
 
@@ -119,16 +119,16 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 	\end{cases}
 \end{equation}
 
-$Burgers$方程
+\textit{Burgers}方程
 \begin{align}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0
 \end{align}
-$Burgers$方程对应的迎风格式
+\textit{Burgers}方程对应的迎风格式
 \begin{equation}
-u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right), \label{EqnUpwind}
+u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right)
 \end{equation}
 
-$Burgers$方程对应的$minmod Limiters$格式
+\textit{Burgers}方程对应的$minmod Limiters$格式
 \begin{equation}
 \begin{aligned}
 u_i^{n+1}=&
@@ -154,8 +154,7 @@ u_i^{n+1}=&
 \subsection{行波方程数值模拟部分}
 考察方程
 \begin{align}
-& \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0,
-\label{EqnCon}
+\frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0
 \end{align}
 在初值条件
 \begin{align}
@@ -234,10 +233,10 @@ u_i^{n+1}=&
 \end{figure}
 
 
-\subsection{$Burgers$方程数值模拟部分}
+\subsection{\textit{Burgers}方程数值模拟部分}
 考察方程
 \begin{align}
-\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0
 \end{align}
 在初值为
 \begin{align}
