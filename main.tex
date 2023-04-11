@@ -49,9 +49,25 @@
 \end{abstract}
 
 \section{引言与背景}
-一维单变量函数的一阶双曲型偏微分方程表示了一个波动的传播发展过程, 在线性方程的情况下,
-波的形状不随时间改变, 而在非线性方程的情况下, 一个连续有限振幅的波可能发展成有间断的解, 即激波, 或者从激波 (间断) 演化为连续的解\citep{Whitham1999}.
-通过偏微分方程的数值计算格式, 可以分析数值解的物理特性和讨论格式的可靠性.
+波动是流体运动的一种重要形式，一般指的是在一个已经处于平衡态的流体体系中，收到小扰动时，其对应物理量的扰动随着时间在空间上进行传播，其在时间上与空间上具有双重周期性。其中对于线性一维的波动方程
+\begin{align}
+& \frac{\partial u^2}{\partial^2 t} - a^2 \frac{\partial u^2}{\partial x^2} = 0
+\label{EqnCon}
+\end{align}
+可以变形分解为两个方向的行波解。
+\begin{align}
+    & \left \frac{\partial }{\partial t} + a \frac{\partial }{\partial x} \right \left \frac{\partial }{\partial t} - a \frac{\partial }{\partial x} \right= 0
+\label{EqnCon}
+\end{align}
+本次研究对象为其中正向传播的行波方程。
+
+另外流体力学中也会存在一些典型的非线性波动现象，如激波等等。在激波发生时，会在上游流体与下有流体之间出现一层流体状态量极具空间变化的过程。为了模拟激波的生成，我们采用了简单的非线性$Burgers$方程
+\begin{align}
+\frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0, \label{EqnBurgers}
+\end{align}
+通过选用具体的某些初始函数的形状，通过模拟实验观察激波的生成。
+
+本次实验重点在于以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括迎风格式，$LaxWendroff$高精度格式，以及采用斜率修正的限制器格式。
 
 \section{实验方法以及对应的理论部分}
 \subsection{行波方程的理论和方法}
