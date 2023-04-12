@@ -164,32 +164,7 @@ u_i^{n+1}=&
 0.0, & x \ge 0.0
 \end{array}\right.
 \end{align}
-下的数值解分析如下：
-
-\begin{enumerate}
-\item
-	设计和编写程序进行数值计算试验, 试验和比较不同格式, \textcolor{red}{不同网格密度}, 不同时间步长的计算结果.
-
-图~\ref{LinearW} 是方程~(\ref{LinearW}) 的
-在网格总数取 428 情况下，
-不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果。
-其中, 实线是精确解, 点线表示初态值, 虚线是数值计算结果, 而圆圈是具体网格 (单元) 上的数据. 
-对于迎风格式，数值解在间断处过渡都很平滑，
-\begin{itemize}
-	\item C 为 0.05 时，$u$随着波的传播被逐渐抹平的情况最为严重，过渡区间宽度最长；
-	\item C 为 0.5 时， $u$随着波的传播被逐渐抹平；
-	\item C 为 0.95 时， $u$随着波的传播与精确解几乎一致；
-	\item C 为 1.0 时数值解与精确解完全一致；
-	\item C 大于 1.0 时，$u$ 的解出现严重振荡，不再像物理解。
-\end{itemize}
-对于 \textit{Lax-Wendroff} 格式，$C=0.95$ 时， 速度尖峰的高度保持得很好，过渡区间宽度与解析解基本一致，但出现的色散 (上冲和下冲)，在间断处出现振荡。
-对于 Minmod 格式，三角形速度尖峰高度不如 \textit{Lax-Wendroff} 格式，但比同样是 $C = 0.95$ 的迎风格式 (图~\ref{fig:problem1-2} ) 高一些，且方波的形状也保持得更好，过渡区间宽度与解析解基本一致。
-
-\item
- {\color{red} 试验一下不稳定差分格式 (如空间前向差分的 Euler 格式) 的数值计算过程, 说明所得到的结果.}
-\item
-  { \color{red} 如果可能, 分析数值耗散和色散效应.}
-\end{enumerate}
+下分别设计几组不同的参数与不同的数值方法，其中模拟结果如图~\ref{LinearW}
 
 \begin{figure} 
 \centering
@@ -232,6 +207,31 @@ u_i^{n+1}=&
   \label{fig:problem1}%
 \end{figure}
 
+\begin{enumerate}
+\item
+	数值计算实验采用不同的格式, \textcolor{red}{不同网格密度}, 不同时间步长的计算结果.
+
+图~\ref{LinearW} 是方程~(\ref{LinearW}) 的
+在网格总数取 428 情况下，
+不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果。
+其中, 实线是精确解, 点线表示初态值, 虚线是数值计算结果, 而圆圈是具体网格 (单元) 上的数据. 
+对于迎风格式，数值解在间断处过渡都很平滑，
+\begin{itemize}
+	\item C 为 0.05 时，$u$随着波的传播被逐渐抹平的情况最为严重，过渡区间宽度最长；
+	\item C 为 0.5 时， $u$随着波的传播被逐渐抹平；
+	\item C 为 0.95 时， $u$随着波的传播与精确解几乎一致；
+	\item C 为 1.0 时数值解与精确解完全一致；
+	\item C 大于 1.0 时，$u$ 的解出现严重振荡，不再像物理解。
+\end{itemize}
+对于 \textit{Lax-Wendroff} 格式，$C=0.95$ 时， 速度尖峰的高度保持得很好，过渡区间宽度与解析解基本一致，但出现的色散 (上冲和下冲)，在间断处出现振荡。
+对于 Minmod 格式，三角形速度尖峰高度不如 \textit{Lax-Wendroff} 格式，但比同样是 $C = 0.95$ 的迎风格式 (图~\ref{fig:problem1-2} ) 高一些，且方波的形状也保持得更好，过渡区间宽度与解析解基本一致。
+
+\item
+ {\color{red} 试验一下不稳定差分格式 (如空间前向差分的 Euler 格式) 的数值计算过程, 说明所得到的结果.}
+\item
+  { \color{red} 如果可能, 分析数值耗散和色散效应.}
+\end{enumerate}
+
 
 \subsection{\textit{Burgers}方程数值模拟部分}
 考察方程
@@ -260,24 +260,9 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 \begin{figure} 
 \centering
 \begin{subfigure}{.9\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem2_limiter20.25.pdf} % first figure itself
+  \includegraphics[width=\textwidth]{figures/problem2_myron.pdf} % first figure itself
 	\caption{}
-  \label{fig:problem2-1}
-\end{subfigure}
-\begin{subfigure}{.9\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem2_limiter20.5.pdf} % first figure itself
-	\caption{}
-  \label{fig:problem2-2}
-\end{subfigure}
-\begin{subfigure}{.9\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem2_limiter20.75.pdf} % first figure itself
-	\caption{}
-  \label{fig:problem2-3}
-\end{subfigure}
-\begin{subfigure}{.9\linewidth}
-  \includegraphics[width=\textwidth]{figures/problem2_limiter21.0.pdf} % first figure itself
-	\caption{}
-  \label{fig:problem2-4}
+  \label{fig:problem2}
 \end{subfigure}
 \caption{%
   方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.2. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
@@ -288,9 +273,15 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 
 \section{分工说明}
 
+代码部分
 徐均益写了\verb|main.jl|, 
-余航写了\verb|main.py|。
+余航写了\verb|main1.py|、\verb|main2.py|、 \verb|run.sh|。
 
+文档部分
+徐均益写了第一部分的线性方程理论与数值解的分析, 余航写了摘要，引言和第二部分非线性方程数值解的分析。
+核心公式由徐均益所写。
+
+陈宇韬参与了最后文档校验。
 \section{附件}
 
 \begin{enumerate}
@@ -319,35 +310,8 @@ References.bib -- 文献文件
 \item
 \verb|figures/problem1_limiter0.95.pdf| - 行波方程~(\ref{EqnCon}) 的数值计算结果, 对应图~\ref{fig:problem1-6}
 \item
-\verb|figures/problem2_limiter20.05.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-1}
-\item
-\verb|figures/problem2_limiter20.25.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-2}
-\item
-\verb|figures/problem2_limiter20.75.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-3}
-\item
-\verb|figures/problem2_limiter21.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2-4}
+\verb|figures/problem2_myron.pdf| -- Burgers方程~(\ref{EqnBurgers}) 的数值计算结果, 对应图~\ref{fig:problem2}
 \end{enumerate}
-
-\section*{项目作业的一些要点}
-为了更好地帮助同学们完成项目作业, 现将一些注意的检查要点和评分标准 (括弧中的数字) 罗列如下,
-\begin{itemize}
-\item
-期限 (20)
-\item
-完整性/报告/清单/分工 (10)
-\item
-报告源文件和 PDF 输出文件, 源程序 (10)
-\item
-图形文件 (10): PDF 或 EPS (Encapulated PostScript) 格式文件. 鉴于对软件的熟悉程度不同, 不再要求 PDF 格式的图形文件, EPS 格式文件也可接受.
-\item
-规范-语法 (10): 论文的写作规范, 如文献引用, 图/表, 叙述之间的逻辑关联, 等等.
-\item
-变量公式规范 (10)
-\item
-正确性 (10)
-\item
-其它 (5): 结构, 概念, 表达, 排版, 等等
-\end{itemize}
 
 \bibliographystyle{apalike}
 \bibliography{References}
