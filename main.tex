@@ -46,7 +46,7 @@
 
 \begin{abstract}
 课程《磁流体力学的数值模拟方法》的第二次作业，讨论一维单一变量双曲型方程，其中包括行波方程和 \textit{Burgers} 方程的有限差分数值解法,
-结合分析讨论几种常用的差分格式的特点. 如迎风格式， \textit{Lax-Wendroff} 格式，斜率补偿的限制器模式。行波方程与 \textit{Burgers} 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 \textit{Burgers} 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
+结合分析讨论几种常用的差分格式的特点. 如 \textit{Upwind} 格式， \textit{Lax-Wendroff} 格式，斜率补偿的限制器模式。行波方程与 \textit{Burgers} 方程采用了两种不同的初始输入，其中行波方程主要讨论在传播同样的距离条件下不同方法的耗散程度；而 \textit{Burgers} 方程则采用行波方程中比较好的斜率补偿限制器的方法，对波形在传播的不同时刻进行观测，同时与理论值进行对比分析结果。
 \end{abstract}
 
 \section{引言与背景}
@@ -67,20 +67,20 @@
 \end{align}
 通过选用具体的某些初始函数的形状，通过模拟实验观察激波的生成。
 
-本次实验主要以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括迎风格式， \textit{Lax-Wendroff} 高精度格式，以及采用斜率修正的限制器格式。
+本次实验主要以上述两个波动方程为基础，通过对比不同的模拟数值方法与参数，来分析对比不同的数值方法的特点与优劣，其中包括 \textit{Upwind} 格式， \textit{Lax-Wendroff} 高精度格式，以及采用斜率修正的限制器格式。
 
 \section{实验方法以及对应的理论部分}
 数值实验总体思路：采用适当的空间间隔将一维空间网格化，然后设计具体的数值物理量的网格值内容，在将时间网格与空间网格的比$C = \Delta t / \Delta x$作为可调节参数，使用程序进行迭代更新网格内容。
-方程包括行波方程与 \textit{Burgers} 方程两种。方法主要是以迎风格式探讨不同的C对于稳定性的影响，然后固定某一个C下讨论不同格式的数值方法对于稳定性的影响。
+方程包括行波方程与 \textit{Burgers} 方程两种。方法主要是以 \textit{Upwind} 格式探讨不同的$C$对于稳定性的影响，然后固定某一个$C$下讨论不同格式的数值方法对于稳定性的影响。
 
 其中具体的方程以及不同的数值方法的表达式形式如下
 
-行波方程
+\subsection{行波方程}
 \begin{align}
 \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0
 \end{align}
 
-行波方程对应的迎风格式\cite{he_volume-preserving_2015}
+行波方程对应的 \textit{Upwind} 格式\cite{he_volume-preserving_2015}
 \begin{equation}
 u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwind}
 \end{equation}
@@ -96,7 +96,7 @@ u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} (u_j^n - u_{j-1}^n), \label{EqnUpwin
 \end{align}
 
  
-行波方程对应的$minmod Limiters$格式
+行波方程对应的\textit{Minmod} 限制器格式
 \begin{equation}
 \begin{aligned}
 u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \Delta t) \sigma_{i-1}^n\right)+ \\
@@ -106,11 +106,11 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 \end{equation}
 其中
 \begin{equation}
-	\sigma_i^n = \verb|minmod| ( \frac{u_i^n - u_{i-1}^{n}}{ \Delta x }, \frac{u_{i+1}^n - u_{i}^{n}}{ \Delta x } )
+	\sigma_i^n = \verb|Minmod| ( \frac{u_i^n - u_{i-1}^{n}}{ \Delta x }, \frac{u_{i+1}^n - u_{i}^{n}}{ \Delta x } )
 \end{equation}
 及
 \begin{equation}
-	\verb|minmod|(a, b) = 
+	\verb|Minmod|(a, b) = 
 	\begin{cases}
 		a, \qif |a| < |b| \qand ab > 0\\
 		b, \qif |a| > |b| \qand ab > 0\\
@@ -118,16 +118,18 @@ u_i^{n+1}= & \frac{a \Delta t}{\Delta x}\left(u_{i-1}^n+\frac{1}{2}(\Delta x-a \
 	\end{cases}
 \end{equation}
 
-\textit{Burgers} 方程
+\subsection{\textit{Burgers} 方程}
+
 \begin{align}
 \frac{\partial u}{\partial t} + u \frac{\partial u}{\partial x} = 0
 \end{align}
-\textit{Burgers} 方程对应的迎风格式
+
+\textit{Burgers} 方程对应的 \textit{Upwind} 格式
 \begin{equation}
 u_j^{n+1} = u^n - \frac{\Delta t}{\Delta x} \left( \frac{1}{2} (u_j^n)^2 - \frac{1}{2} (u_{j-1}^n)^2\right)
 \end{equation}
 
-\textit{Burgers} 方程对应的 \textit{minmod Limiters} 格式
+\textit{Burgers} 方程对应的 \textit{Minmod} 限制器格式
 \begin{equation}
 \begin{aligned}
 u_i^{n+1}=&
@@ -137,10 +139,10 @@ u_i^{n+1}=&
 \end{equation}
 其中
 \begin{equation}
-	\sigma_i^n = \verb|minmod| \left( \frac{ \frac{1}{2} (u_i^n)^2 - \frac{1}{2} (u_{i-1}^{n})^2 }{ \Delta x }, \frac{ \frac{1}{2} (u_{i+1}^n)^2 - \frac{1}{2} (u_{i}^{n})^2}{ \Delta x } \right)
+	\sigma_i^n = \verb|Minmod| \left( \frac{ \frac{1}{2} (u_i^n)^2 - \frac{1}{2} (u_{i-1}^{n})^2 }{ \Delta x }, \frac{ \frac{1}{2} (u_{i+1}^n)^2 - \frac{1}{2} (u_{i}^{n})^2}{ \Delta x } \right)
 \end{equation}
 \begin{equation}
-	\verb|minmod|(a, b) = 
+	\verb|Minmod|(a, b) = 
 	\begin{cases}
 		a, \qif |a| < |b| \qand ab > 0\\
 		b, \qif |a| > |b| \qand ab > 0\\
@@ -201,35 +203,36 @@ u_i^{n+1}=&
   \caption{}
   \label{fig:problem1-6}
 \end{subfigure}
-\caption{方程~(\ref{EqnCon}) 在 $t=0.5$ 时刻的解. 其中虚线表示数值迎风格式的计算结果, 线上的圆圈表示具体网格上的数据. 同一时刻的精确解用实线表示. 作为对照,
+\caption{方程~(\ref{EqnCon}) 在 $t=0.5$ 时刻的解. 其中虚线表示数值 \textit{Upwind} 格式的计算结果, 线上的圆圈表示具体网格上的数据. 同一时刻的精确解用实线表示. 作为对照,
   初始时刻的值以点线表示, 坐标网格总数为 517. (a) 迎风格式, $C = 0.05$, (b)  迎风格式, $C = 0.50$, (c)  迎风格式, $C = 0.95$, (d) 迎风格式, $C = 1.0$,
-  此时数值解与精确解完全相同, (e) \textit{Lax-Wendroff} 格式, $C=0.95$,  (f) Minmod格式, $C=0.95$.} \label{LinearW}
+  此时数值解与精确解完全相同, (e) \textit{Lax-Wendroff} 格式, $C = 0.95$,  (f) Minmod格式, $C = 0.95$.} \label{LinearW}
   \label{fig:problem1}%
 \end{figure}
 
-\begin{enumerate}
-\item
-	数值计算实验采用不同的格式, \textcolor{red}{不同网格密度}, 不同时间步长的计算结果.
 
-图~\ref{LinearW} 是方程~(\ref{LinearW}) 的
-在网格总数取 428 情况下，
-不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果。
+数值计算实验采用不同的格式, 不同参数的计算结果.
 其中, 实线是精确解, 点线表示初态值, 虚线是数值计算结果, 而圆圈是具体网格 (单元) 上的数据. 
-对于迎风格式，数值解在间断处过渡都很平滑，
+
+\begin{enumerate}
+    \item 比较\textit{Upwind} 格式在网格总数取 428 情况下，
+        不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果。
+        如图~\ref{LinearW}的前四张所示。可以看到 \textit{Upwind} 格式的数值解在间断处过渡都很平滑。
+
+        其中
 \begin{itemize}
-	\item C 为 0.05 时，$u$随着波的传播被逐渐抹平的情况最为严重，过渡区间宽度最长；
-	\item C 为 0.5 时， $u$随着波的传播被逐渐抹平；
-	\item C 为 0.95 时， $u$随着波的传播与精确解几乎一致；
-	\item C 为 1.0 时数值解与精确解完全一致；
-	\item C 大于 1.0 时，$u$ 的解出现严重振荡，不再像物理解。
+	\item $C = 0.05$ 时，$u$随着波的传播被逐渐抹平的情况最为严重，过渡区间宽度最长；
+	\item $C = 0.5$ 时， $u$随着波的传播被逐渐抹平；
+	\item $C = 0.95$ 时， $u$随着波的传播与精确解几乎一致；
+	\item $C = 1.0$ 时数值解与精确解完全一致；
+	\item $C = 1.0$ 时，$u$ 的解出现严重振荡，不再像物理解。
 \end{itemize}
-对于 \textit{Lax-Wendroff} 格式，$C=0.95$ 时， 速度尖峰的高度保持得很好，过渡区间宽度与解析解基本一致，但出现的色散 (上冲和下冲)，在间断处出现振荡。
-对于 Minmod 格式，三角形速度尖峰高度不如 \textit{Lax-Wendroff} 格式，但比同样是 $C = 0.95$ 的迎风格式 (图~\ref{fig:problem1-2} ) 高一些，且方波的形状也保持得更好，过渡区间宽度与解析解基本一致。
 
 \item
- {\color{red} 试验一下不稳定差分格式 (如空间前向差分的 Euler 格式) 的数值计算过程, 说明所得到的结果.}
-\item
-  { \color{red} 如果可能, 分析数值耗散和色散效应.}
+    比较不同格式，可以看图~\ref{LinearW}的$c$ $e$ $f$三张图。和 \textit{Upwind} 格式相比，其他两种格式的特点如下。
+\begin{itemize}
+    \item 对于 \textit{Lax-Wendroff} 格式，$C=0.95$ 时， 速度尖峰的高度保持得很好，过渡区间宽度与解析解基本一致，但出现的色散 (上冲和下冲)，在间断处出现振荡。
+    \item 对于 \textit{Minmod} 格式，三角形速度尖峰高度不如 \textit{Lax-Wendroff} 格式，但比同样是 $C = 0.95$ 的 \textit{Upwind} 格式 (图~\ref{fig:problem1-2} ) 高一些，且方波的形状也保持得更好，过渡区间宽度与解析解基本一致。
+\end{itemize}
 \end{enumerate}
 
 
@@ -250,13 +253,6 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
 \end{array} \right.
 \end{align}
 时的数值解如图~\ref{fig:problem2} 所示。
-  % TODO 以图形来表示数值解的发展和变化.
-  % TODO 可能的话, 分析数值耗散和色散效应 (间断的宽度, 传播速度, 产生的数值解振荡等).
-
-% TODO 我们 C 取了 0.2
-图~\ref{fig:problem2} 是方程~(\ref{EqnBurgers}) 的迎风格式在时间 $t = 0.25$, $0.5$, $0.75$, 和 $1.0$ 的计算结果, 其中 Courant 系数取 \textcolor{red}{0.95},
-即 $\Delta t = 0.95 \frac{\Delta x}{\max(u)}$.
-
 \begin{figure} 
 \centering
 \begin{subfigure}{.9\linewidth}
@@ -265,11 +261,34 @@ u|_{t=0} = \left\{\begin{array}{ll} 1.8, & x < -0.8,
   \label{fig:problem2}
 \end{subfigure}
 \caption{%
-  方程~(\ref{EqnBurgers}) 的 Minmode 格式计算结果, 采用了 428 个网格, Courant 系数 $C$ 取为 0.2. 虚线表示数值格式的计算结果, 其中上面的圆圈表示具体的数据;
-  解析解用实线表示, 初始时刻的值以点线表示. (a) $t=0.25$, (b) $t=0.5$, (c) $t=0.75$, (d) $t=1.0$.
+    方程~(\ref{EqnBurgers}) 的 \textit{Upwind} 格式与 \textit{Minmod} 格式计算结果, 采用了 100 个网格, 系数 $C  = \Delta t / \Delta = 0.9$. 
+    圆圈表示每一个格点的数据;
+  从上往下分别取时间为 $t = 0.25$, $t = 0.5$, $t = 0.75$, $t = 1.0$.
 }
   \label{fig:problem2}%
 \end{figure}
+
+为了能更清晰的对比激波间断以及两种方法的差异色散与耗散，我们将网格间隔稍微调大了一些，用于放大效果。其中每一个小圆圈都代表着一个网格点。
+\begin{enumerate}
+\item
+    纵向来看，波形随着时间向前传播的同时，由于方程自身的特性，
+    向上阶跃部分变得平滑，而向下的平滑部分却逐渐形成了激波。
+\begin{itemize}
+	\item $C = 0.25$ 时，激波尚未形成，但是向上阶跃部分已经趋于平滑；
+	\item $C = 0.5$  时，激波基本形成，向前传播；
+	\item $C = 0.75$ 时，激波已经形成，继续向前传播；
+	\item $C = 1.25$ 时，激波形成，向上阶跃部分已经基本平滑；
+\end{itemize}
+
+\item
+    横向比较激波效应，可以看到\textit{Upwind} 格式与 \textit{Minmod} 格式的一些特性差异，由于 \textit{Upwind} 格式没有高阶补偿向，
+    导致会有持续的耗散，因此激波始终保持着5个左右的间隔距离，
+    而 \textit{Minmod} 格式存在高阶补偿项，能够较快速度将激波间隔缩小到2个左右的间隔距离，
+    就激波模拟而言 \textit{Minmod} 格式存在一定的优势
+\item
+    横向比较色散效应，可以看到\textit{Upwind} 格式没有色散只有耗散，而\textit{Minmod} 格式
+    存在耗散，具体体现在波前有少量的振荡，同时在原本离散的阶跃处，产生了不应该存在的凸起部分。
+\end{enumerate}
 
 \section{分工说明}
 
