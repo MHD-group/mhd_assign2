@@ -128,7 +128,7 @@ function problem1(C::AbstractFloat, f::Function, title::String; Δx::AbstractFlo
 		flg=update!(c, flg, f, C)
 	end
 
-	plt.title("time = "*string(t)*", "* title)
+	plt.title("time = "*string(t)*", "*"C = "*string(C)*", "* title)
 	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	plt.savefig("../figures/problem1_"*string(f)*string(C)*".pdf", bbox_inches="tight")
 	plt.show()
@@ -157,10 +157,6 @@ function problem2(t::AbstractFloat)
 	plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
-problem2(0.25)
-problem2(0.5)
-problem2(0.75)
-problem2(1.0)
 
 # %%
 function main()
@@ -170,9 +166,9 @@ function main()
 	problem1(1.0, upwind, "Upwind")
 	problem1(0.95, lax_wendroff, "Lax-Wendroff")
 	problem1(0.95, limiter, "Minmod")
-	problem2(0.25)
-	problem2(0.5)
-	problem2(0.75)
-	problem2(1.0)
+	# problem2(0.25)
+	# problem2(0.5)
+	# problem2(0.75)
+	# problem2(1.0)
 end
 main()
