@@ -3,7 +3,7 @@
 # vim:fenc=utf-8
 #
 # Created On  : 2023-04-03 00:24
-# Last Modified : 2023-04-12 02:05
+# Last Modified : 2023-04-12 12:58
 # Copyright © 2023 myron <yh131996@mail.ustc.edu.cn>
 #
 # Distributed under terms of the MIT license.
@@ -52,7 +52,6 @@ def Upwind(x, C=1, t=1):
         next = (n%2 + 1)%2
         for i in range(N):
             I = i - 1
-#            tmp[next,I+1] =  tmp[cur,I+1] - C*(tmp[cur, I+1] - tmp[cur, I])
             tmp[next,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2)
             result = tmp[next]
     return tmp[0]
@@ -71,13 +70,6 @@ def Minmod(x, C=1, t=1):
         nex = (n%2 + 1)%2
         for i in range(N):
             I = i - 2
-#            tmp[nex,I+1] =  tmp[cur,I+1] - C*(tmp[cur, I+1] - tmp[cur, I]) \
-#                    - 0.5 * C \
-#		    * ( minabs(tmp[cur, I+1]-tmp[cur, I], tmp[cur, I+2]-tmp[cur, I+1]) \
-#                    - minabs(tmp[cur, I]-tmp[cur, I-1], tmp[cur, I+1]-tmp[cur, I]) ) \
-#                    + 0.5 * C ** 2 \
-#		    * ( minabs(tmp[cur, I+1]-tmp[cur, I], tmp[cur, I+2]-tmp[cur, I+1]) \
-#                    - minabs(tmp[cur, I]-tmp[cur, I-1], tmp[cur, I+1]-tmp[cur, I]) )
             tmp[nex,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2) \
                     - 0.5 * C \
 		    * 0.5 * ( minabs(tmp[cur, I+1]**2-tmp[cur, I]**2, tmp[cur, I+2]**2-tmp[cur, I+1]**2) \
@@ -106,13 +98,14 @@ if  __name__ == '__main__':
     # Δx: args.resolution
     x = np.arange(-1, 2, args.resolution)
     # C is Δt/Δx
-    C = args.ratio
+    C = args.ratio / 2
     # Δt
     t = C * args.resolution
 
     fig, axs = plt.subplots(len(Ts),
                             len(methods),
-                            figsize=(14, 6))
+                            figsize=(12, 10))
+    plt.rcParams.update({'font.size': 12})
     for (T, i) in zip(Ts, range(len(Ts))):
         for (method, j) in zip(methods, range(len(methods))):
             n_t = int(T/t)
@@ -134,9 +127,18 @@ if  __name__ == '__main__':
             else:
                 print("error input function")
 #            axs[i].plot(x, M1, alpha=0.5)
-            axs[i][j].plot(x, S1)
-            axs[i][j].set_title("$C = " + str(C) + " t = " + str(T) + "$")
+            axs[i][j].plot(x, S1, marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none")
+            if i == 0 and j == 0:
+                axs[i][j].set_title("$Upwind$ $C = " + str(C * 2) + "$ \n $t = " + str(T) + "$")
+            elif i == 0 and j == 1:
+                axs[i][j].set_title("$Minmod$ $C = " + str(C * 2) + "$ \n $t = " + str(T) + "$")
+            else:
+                axs[i][j].set_title("$t = " + str(T) + "$")
 
-    plt.show()
+    plt.rc('figure', titlesize=20)
+    plt.rc('xtick', labelsize=20)
+    plt.tight_layout()
+#    plt.show()
+    plt.savefig("../figures/problem2_myron.pdf", bbox_inches="tight")
 
 
