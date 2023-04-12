@@ -7,6 +7,21 @@
 \usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{physics}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=Blue4Link,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfauthor=徐均益
+    }
+\definecolor{Blue4Link}{RGB}{46,49,146}
+\definecolor{myOrange}{RGB}{178,76,0}
+\definecolor{green4eye}{RGB}{0,120,2}%
+\definecolor{blue4eye}{RGB}{1,126,218}%
+\definecolor{cyan4eye}{RGB}{31,186,190}%
+\definecolor{myhighlight}{RGB}{255,214,161}
+\definecolor{mybackground}{RGB}{204,232,207}
 \usepackage{geometry}
 \usepackage{natbib}
 \usepackage{subcaption}
@@ -166,7 +181,7 @@ u_i^{n+1}=&
 0.0, & x \ge 0.0
 \end{array}\right.
 \end{align}
-下分别设计几组不同的参数与不同的数值方法，其中模拟结果如图~\ref{LinearW}
+下分别设计几组不同的参数与不同的数值方法，其中模拟结果如图~\ref{fig:problem1}
 
 \begin{figure} 
 \centering
@@ -205,8 +220,7 @@ u_i^{n+1}=&
 \end{subfigure}
 \caption{方程~(\ref{EqnCon}) 在 $t=0.5$ 时刻的解. 其中虚线表示数值 \textit{Upwind} 格式的计算结果, 线上的圆圈表示具体网格上的数据. 同一时刻的精确解用绿色实线表示. 作为对照,
   初始时刻的值以点线表示, 坐标网格总数为 517. (a) 迎风格式, $C = 0.05$, (b)  迎风格式, $C = 0.50$, (c)  迎风格式, $C = 0.95$, (d) 迎风格式, $C = 1.0$,
-  此时数值解与精确解完全相同, (e) \textit{Lax-Wendroff} 格式, $C = 0.95$,  (f) Minmod格式, $C = 0.95$.} \label{LinearW}
-  \label{fig:problem1}%
+  此时数值解与精确解完全相同, (e) \textit{Lax-Wendroff} 格式, $C = 0.95$,  (f) Minmod格式, $C = 0.95$.} \label{fig:problem1}
 \end{figure}
 
 
@@ -216,7 +230,7 @@ u_i^{n+1}=&
 \begin{enumerate}
     \item 比较\textit{Upwind} 格式在网格总数取 428 情况下，
         不同格式, 不同 Courant 系数 ($C = \Delta t / \Delta x$), 在 $t = 0.5$ 的计算结果。
-        如图~\ref{LinearW}的前四张所示。可以看到 \textit{Upwind} 格式的数值解在间断处过渡都很平滑。
+        如图~\ref{fig:problem1}的前四张所示。可以看到 \textit{Upwind} 格式的数值解在间断处过渡都很平滑。
 
         其中
 \begin{itemize}
@@ -228,7 +242,7 @@ u_i^{n+1}=&
 \end{itemize}
 
 \item
-    比较不同格式，可以看图~\ref{LinearW}的$c$ $e$ $f$三张图。和 \textit{Upwind} 格式相比，其他两种格式的特点如下。
+    比较不同格式，可以看图~\ref{fig:problem1}的$c$ $e$ $f$三张图。和 \textit{Upwind} 格式相比，其他两种格式的特点如下。
 \begin{itemize}
     \item 对于 \textit{Lax-Wendroff} 格式，$C=0.95$ 时， 速度尖峰的高度保持得很好，过渡区间宽度与解析解基本一致，但出现的色散 (上冲和下冲)，在间断处出现振荡。
     \item 对于 \textit{Minmod} 格式，三角形速度尖峰高度不如 \textit{Lax-Wendroff} 格式，但比同样是 $C = 0.95$ 的 \textit{Upwind} 格式 (图~\ref{fig:problem1-2} ) 高一些，且方波的形状也保持得更好，过渡区间宽度与解析解基本一致。
