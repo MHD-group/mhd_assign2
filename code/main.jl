@@ -136,8 +136,6 @@ end
 
 # %%
 function problem2(t::AbstractFloat)
-
-	t=0.5
 	C = 0.95/1.8
 	Δt =  C * Δx
 	f = limiter2
@@ -165,9 +163,9 @@ function main()
 	problem1(1.0, upwind, "Upwind")
 	problem1(0.95, lax_wendroff, "Lax-Wendroff")
 	problem1(0.95, limiter, "Minmod")
-	# problem2(0.25)
+	problem2(0.25)
 	problem2(0.5)
-	# problem2(0.75)
-	# problem2(1.0)
+	problem2(0.75)
+	problem2(1.0)
 end
 main()
