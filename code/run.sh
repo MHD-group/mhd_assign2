@@ -7,4 +7,4 @@
 #python main2.py -x 0.012 -i 2 -C 0.95 -t 0.5,0.75,1,1.25 -m Upwind,Minmod
 #python main2.py -x 0.02 -i 2 -C 0.7 -t 0.5,0.6,0.7,0.8 -m Upwind,Minmod &
 #python main2.py -x 0.02 -i 2 -C 0.8 -t 0.5,0.6,0.7,0.8 -m Upwind,Minmod &
-python main2.py -x 0.01 -i 2 -C 0.9 -t 0.25,0.5,0.75,1 -m Upwind,Minmod
+python main2.py -x 0.05 -i 2 -C 0.95 -t 0.25,0.5,0.75,1 -m Upwind,Minmod

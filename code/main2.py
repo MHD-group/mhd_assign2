@@ -52,7 +52,7 @@ def Upwind(x, C=1, t=1):
         next = (n%2 + 1)%2
         for i in range(N):
             I = i - 1
-            tmp[next,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2)
+            tmp[next,I+1] =  tmp[cur,I+1] - C * 0.5 * ( tmp[cur, I+1] + tmp[cur, I] ) * (tmp[cur, I+1] - tmp[cur, I])
             result = tmp[next]
     return tmp[0]
 
@@ -70,13 +70,20 @@ def Minmod(x, C=1, t=1):
         nex = (n%2 + 1)%2
         for i in range(N):
             I = i - 2
-            tmp[nex,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2) \
+            #tmp[nex,I+1] =  tmp[cur,I+1] - C*0.5*(tmp[cur, I+1]**2 - tmp[cur, I]**2) \
+            #        - 0.5 * C \
+	    #        * 0.5 * ( minabs(tmp[cur, I+1]**2-tmp[cur, I]**2, tmp[cur, I+2]**2-tmp[cur, I+1]**2) \
+            #        - minabs(tmp[cur, I]**2-tmp[cur, I-1]**2, tmp[cur, I+1]**2-tmp[cur, I]**2) ) \
+            #        + 0.5 * C ** 2 \
+	    #        * 0.5 *( minabs(tmp[cur, I+1]**2-tmp[cur, I]**2, tmp[cur, I+2]**2-tmp[cur, I+1]**2) \
+            #        - minabs(tmp[cur, I]**2-tmp[cur, I-1]**2, tmp[cur, I+1]**2-tmp[cur, I]**2) )
+            cur_v = 0.5 * ( tmp[cur, I+1] + tmp[cur, I] )
+            #cur_v = tmp[cur, I+1]
+            tmp[nex,I+1] =  tmp[cur,I+1] - C*cur_v*(tmp[cur, I+1] - tmp[cur, I]) \
                     - 0.5 * C \
-		    * 0.5 * ( minabs(tmp[cur, I+1]**2-tmp[cur, I]**2, tmp[cur, I+2]**2-tmp[cur, I+1]**2) \
-                    - minabs(tmp[cur, I]**2-tmp[cur, I-1]**2, tmp[cur, I+1]**2-tmp[cur, I]**2) ) \
-                    + 0.5 * C ** 2 \
-		    * 0.5 *( minabs(tmp[cur, I+1]**2-tmp[cur, I]**2, tmp[cur, I+2]**2-tmp[cur, I+1]**2) \
-                    - minabs(tmp[cur, I]**2-tmp[cur, I-1]**2, tmp[cur, I+1]**2-tmp[cur, I]**2) )
+	            * cur_v\
+                    * (1 - C * cur_v)\
+                    * minabs(tmp[cur, I+2]-tmp[cur, I+1], tmp[cur, I+1]-tmp[cur, I])
             result = tmp[nex]
 
     return result
@@ -98,7 +105,7 @@ if  __name__ == '__main__':
     # Δx: args.resolution
     x = np.arange(-1, 2, args.resolution)
     # C is Δt/Δx
-    C = args.ratio / 2
+    C = args.ratio / 1.8
     # Δt
     t = C * args.resolution
 
@@ -129,16 +136,16 @@ if  __name__ == '__main__':
 #            axs[i].plot(x, M1, alpha=0.5)
             axs[i][j].plot(x, S1, marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none")
             if i == 0 and j == 0:
-                axs[i][j].set_title("$Upwind$ $C = " + str(C * 2) + "$ \n $t = " + str(T) + "$")
+                axs[i][j].set_title("$Upwind$ $C = " + str(C * 1.8) + "$ \n $t = " + str(T) + "$")
             elif i == 0 and j == 1:
-                axs[i][j].set_title("$Minmod$ $C = " + str(C * 2) + "$ \n $t = " + str(T) + "$")
+                axs[i][j].set_title("$Minmod$ $C = " + str(C * 1.8) + "$ \n $t = " + str(T) + "$")
             else:
                 axs[i][j].set_title("$t = " + str(T) + "$")
 
     plt.rc('figure', titlesize=20)
     plt.rc('xtick', labelsize=20)
     plt.tight_layout()
-#    plt.show()
-    plt.savefig("../figures/problem2_myron.pdf", bbox_inches="tight")
+    plt.show()
+#    plt.savefig("../figures/problem2_myron.pdf", bbox_inches="tight")
 
 
