@@ -101,10 +101,10 @@ function limiter(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	end
 end
 
-function limiter2(up::CircularVector, un::CircularVector, C::AbstractFloat)
-	u = @. 0.5un^2
+function limiter2(up::CircularVector, u::CircularVector, C::AbstractFloat)
 	for i in eachindex(u)
-		up[i] = un[i] - C * (u[i] - u[i-1]) - 0.5 * C * (1 - C) *
+		B = 0.5C*(u[i] + u[i-1])
+		up[i] = u[i] - B *  (u[i] - u[i-1]) - 0.5 * B * (1 - B) *
 			( minmod(u[i]-u[i-1], u[i+1]-u[i]) - minmod(u[i-1]-u[i-2], u[i]-u[i-1]) )
 	end
 end
@@ -136,7 +136,9 @@ end
 
 # %%
 function problem2(t::AbstractFloat)
-	C = 0.2
+
+	t=0.5
+	C = 0.95/1.8
 	Δt =  C * Δx
 	f = limiter2
 	matplotlib.rc("font", size=13)
@@ -144,17 +146,14 @@ function problem2(t::AbstractFloat)
 	c=Cells(step=Δx, init=init2)
 	plt.plot(c.x, c.u, "-.k", linewidth=0.2, label="init")
     # plt.plot(c.x, circshift(c.u, round(Int, t*C/Δt)), "-g", linewidth=1, alpha=0.4)
-
 	flg=true # flag
 	for _ = 1:round(Int, t/Δt)
 		flg=update!(c, flg, f, C)
 	end
-
 	plt.title("time = "*string(t)*", "*"Minmod")
 	# plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, marker="o", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
 	plt.plot(c.x, c.up, linestyle="dashed", linewidth=0.4, color="navy", marker="o", markeredgecolor="purple", markeredgewidth=0.4, markersize=4,  markerfacecolor="none", label="up")
-
-	plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
+	# plt.savefig("../figures/problem2_"*string(f)*string(t)*".pdf", bbox_inches="tight")
 	plt.show()
 end
 
@@ -167,7 +166,7 @@ function main()
 	problem1(0.95, lax_wendroff, "Lax-Wendroff")
 	problem1(0.95, limiter, "Minmod")
 	# problem2(0.25)
-	# problem2(0.5)
+	problem2(0.5)
 	# problem2(0.75)
 	# problem2(1.0)
 end
