@@ -75,11 +75,30 @@ C = 0.95
 Δt =  C * Δx
 
 
+# function upwind(up::CircularVector, u::CircularVector, C::AbstractFloat)
+# 	for i in eachindex(u)
+# 		up[i] = u[i] - C * (u[i] -u[i-1])  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
+# 	end
+# end
+
 function upwind(up::CircularVector, u::CircularVector, C::AbstractFloat)
-	for i in eachindex(u)
-		up[i] = u[i] - C * (u[i] -u[i-1])  # u_j^{n+1} = u_j^n - Δt/Δx * ( u_j^n - u_{j-1}^n )
-	end
+	n = length(u)
+	A=Matrix(Tridiagonal(repeat([-C], n-1), repeat([C+1], n), repeat([0.0], n-1)))
+	A[1, n] = -C
+	up .=  A \ u
 end
+
+function ygs(up::CircularVector, u::CircularVector, C::AbstractFloat)
+	n = length(u)
+	cc = zeros(n)
+	for i in eachindex(cc)
+		cc[i] = 0.5*C*(u[i] + u[i-1])
+	end
+	A=Matrix(Tridiagonal(-cc[2:end], cc.+1, repeat([0.0], n-1)))
+	A[1, n] = -cc[1]
+	up .=  A \ u
+end
+
 
 
 function upwind2(up::CircularVector, u::CircularVector, C::AbstractFloat)
@@ -136,9 +155,9 @@ end
 
 # %%
 function problem2(t::AbstractFloat)
-	C = 0.95/1.8
+	C = 1.1
 	Δt =  C * Δx
-	f = limiter2
+	f = ygs
 	matplotlib.rc("font", size=13)
 	plt.figure(figsize=(10,2.5))
 	c=Cells(step=Δx, init=init2)
@@ -158,8 +177,8 @@ end
 # %%
 function main()
 	problem1(0.05, upwind, "Upwind")
-	problem1(0.5, upwind, "Upwind")
-	problem1(0.95, upwind, "Upwind")
+	problem1(1.0, upwind, "Upwind")
+	problem1(0.01, upwind, "Upwind")
 	problem1(1.0, upwind, "Upwind")
 	problem1(0.95, lax_wendroff, "Lax-Wendroff")
 	problem1(0.95, limiter, "Minmod")
